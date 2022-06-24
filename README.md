@@ -29,19 +29,33 @@ This project contains three separate tools:
 ## How To Run:
 
 ***IN PROGRESS***
+1. Download python
+   1. Make sure the PATH is correctly setup and PIP is also installed
+      1. To check python is installed, run `python --version` or `py --version`
+         1. I used Python 3.10.5 - 64 bit
+      2. To check your python PATH works, run `python` or `py` in terminal.
+         1. You can exit with `exit()` or `^Z` (Ctrl-Z)
+      3. To check pip is installed, run `pip --version`
+         1. I used pip 22.0.4
+2. Download/clone this repository! The easiest method is to "Download Zip", and then unzip the file.
+3. Next (in your python IDE of choice, I recommend PyCharm) run something along the lines of "pip install requirements.txt." 
+   1. Make sure you are inside the file that contains the code when you run this command by either using the terminal in
+your ide, like PyCharm, or using the `cd` command.
+   2. If you are using PyCharm, you can just open the file in PyCharm and press the "install requirement".\
+4. 
 
 ---
 ## Review of Tools: 
 Instructions of the different tools this project creates and how to use them.
 ***IN PROGRESS***
 
-### - CEEO Rotate & Graph:
+#### - CEEO Rotate & Graph:
 This is a tool for Onshape's **Assembly**.
 
-### - CEEO Image Maker:
+#### - CEEO Image Maker:
 This is a tool for Onshape's **Part Studio**.
 
-### - CEEO GIF Maker:
+#### - CEEO GIF Maker:
 This is a tool for Onshape's **Assembly**.
 
 ---
