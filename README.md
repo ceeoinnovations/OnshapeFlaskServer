@@ -103,9 +103,9 @@ part) and the second part is the "Output" (the part you want to observe as it mo
 small trackers and attacking them to the points you want to specifically observe as the position of a big piece is 
 the center of the piece, not the edges you probably want to track. Examples below!
 
-![Example Screen Recording](examples/FourBarRotation.gif)
+![Example Screen Recording](./examples/FourBarRotation.gif)
 
-![The Produced Graph](examples/Graph.jfif)
+![The Produced Graph](./examples/Graph.jfif)
 
 #### - CEEO Image Maker:
 This is a tool for Onshape's **Part Studio**.
