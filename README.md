@@ -92,7 +92,8 @@ The rest you can edit as you see fit.
 ---
 ## Review of Tools: 
 Instructions of the different tools this project creates and how to use them.
-***IN PROGRESS***
+
+<br>
 
 #### - CEEO Rotate & Graph:
 This is a tool for Onshape's **Assembly**. It rotates any given part around the Z-Axis, centered at the origin. (Updates
@@ -122,7 +123,23 @@ Example Image: <br> ![](./examples/ExampleImage.jfif)
 <br>
 
 #### - CEEO GIF Maker:
-This is a tool for Onshape's **Assembly**.
+This is a tool for Onshape's **Assembly**. This function creates a GIF. Its main purpose is to create a GIF where the 
+camera rotates around the object to give the object the effect that it is spinning. It also has the options to zoom in
+and out throughout the GIF by setting the zoom start/end, along with an option to set the middle zoom point. The
+starting view angle can be any of the preprogrammed in angles (6 basic directions and isometric), along with any named
+views. This function is multipurpose, set rotation to 0 or uncheck all directions to make it not rotate and only
+zoom in and out. Turn on automatic zoom and the object will always be center of the frame. Set frames to 1 to just get
+an image saved as jpg. Change if edges are shown, what the height and width of the GIF will be, along with the name of
+the file. Also change how long each frame is shown with duration, where the default 0 makes a seamless transition.
+Creating the GIF does take a longer time the more frames there are in the GIF, along with increasing the size. Adding
+more frames is the easiest way to slow down the GIF while keeping it smooth, but duration of each frame also works.
+Progressed is displayed in the terminal where the Flask app is, but sadly not on the webpage. The example below skipped
+about 30-60 seconds of loading the GIF, does not move the pieces in real time like Rotate & Graph, all work is behind
+the scenes by just doing what was done in the Image Maker, multiple times. GIFs are saved at `static/images`.
+
+Example Screen Recording: <br> ![](./examples/GifMaker.gif)
+
+The Produced GIF: <br> ![](./examples/LogoGIF.gif)
 
 ---
 This project created by the Tufts Center for Engineering Education and Outreach (CEEO).
