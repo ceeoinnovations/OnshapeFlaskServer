@@ -37,7 +37,7 @@ This project contains three separate tools:
          1. You can exit with `exit()` or `^Z` (Ctrl-Z)
       3. To check pip is installed, run `pip --version`
          1. I used pip 22.0.4
-2. Download/clone this repository! The easiest method is to "Download Zip", and then unzip the file.
+2. Download/clone this repository. The easiest method is to "Download Zip", and then unzip the file.
 3. Next in the terminal (in your python IDE of choice, I recommend PyCharm) run `pip install -r requirements.txt`
    1. Make sure you are inside the file that contains the code when you run this command by either using the terminal in
 your ide or using the `cd` command.
@@ -103,12 +103,23 @@ part) and the second part is the "Output" (the part you want to observe as it mo
 small trackers and attacking them to the points you want to specifically observe as the position of a big piece is 
 the center of the piece, not the edges you probably want to track. Examples below!
 
-![Example Screen Recording](./examples/FourBarRotation.gif)
+Example Screen Recording: <br> ![](./examples/FourBarRotation.gif)
 
-![The Produced Graph](./examples/Graph.jfif)
+The Produced Result: <br> ![](./examples/Graph.jfif)
+
+<br>
 
 #### - CEEO Image Maker:
-This is a tool for Onshape's **Part Studio**.
+This is a tool for Onshape's **Part Studio**. It generates images of a shaded view of the part studio. It only has
+options for 8 different views at the moment, but more can be added through the code easily. The eight options are the 6
+normal directions (Top, Front, Left, etc.) along with Isometric (same isometric as in Onshape) and Flipped Isometric, a
+custom direction created to show isometric from the opposite direction.
+
+Example Screen Recording: <br> ![](./examples/ImageMaker.gif)
+
+Example Image: <br> ![](./examples/ExampleImage.jfif)
+
+<br>
 
 #### - CEEO GIF Maker:
 This is a tool for Onshape's **Assembly**.

@@ -204,7 +204,7 @@ def login2():
     client = Client(configuration={"base_url": base, "access_key": app_key, "secret_key": secret_key})
     url = '{}/documents/{}/w/{}/e/{}'.format(base, str(DID), str(WID), str(EID))
     return render_template('ImageMaker.html', DID=DID, WID=WID, EID=EID, condition1=view,
-                           img_data=part_studio_shaded_view(client, url, view),
+                           img_data=part_studio_shaded_view(client, url, view), condition2=view.replace(" ", ""),
                            return1=list_parts_part_studio(client, url).split('\n'))
 
 
@@ -441,7 +441,7 @@ def part_studio_shaded_view(client, url: str, view_matrix="front"):
     matrix = "0.612,0.612,0,0,-0.354,0.354,0.707,0,0.707,-0.707,0.707,0"
     if any(face in view_matrix for face in ["Front", "Back", "Top", "Bottom", "Left", "Right"]):
         matrix = view_matrix   # Onshape client will accept one of these six strings as just a word instead of an array
-    elif view_matrix == "Flipped_Isometric":   # Custom Matrix created to be a flipped version of the isometric matrix
+    elif view_matrix == "Flipped Isometric":   # Custom Matrix created to be a flipped version of the isometric matrix
         matrix = "0.612,0.612,0,0,0.354,-0.354,-0.707,0,-0.707,0.707,-0.707,0"
     elif isinstance(view_matrix, list):   # Else if given a list, convert it into a string.
         matrix = str(view_matrix).replace('[', '').replace(']', '')

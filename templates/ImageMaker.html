@@ -29,14 +29,14 @@
 
         <label for="view_matrix">Change View Angle:</label>
         <select name="view_matrix" id="view_matrix">
-            <option value="Front" {% if condition1=="Front" %} selected="selected" {% endif %}>Front</option>
-            <option value="Back" {% if condition1=="Back" %} selected="selected" {% endif %}>Back</option>
-            <option value="Top" {% if condition1=="Top" %} selected="selected" {% endif %}>Top</option>
-            <option value="Bottom" {% if condition1=="Bottom" %} selected="selected" {% endif %}>Bottom</option>
-            <option value="Left" {% if condition1=="Left" %} selected="selected" {% endif %}>Left</option>
-            <option value="Right" {% if condition1=="Right" %} selected="selected" {% endif %}>Right</option>
-            <option value="Isometric" {% if condition1=="Isometric" %} selected="selected" {% endif %}>Isometric</option>
-            <option value="Flipped_Isometric" {% if condition1=="Flipped-Isometric" %} selected="selected" {% endif %}>Flipped Isometric</option>
+            <option value="Front" {% if condition2=="Front" %} selected="selected" {% endif %}>Front</option>
+            <option value="Back" {% if condition2=="Back" %} selected="selected" {% endif %}>Back</option>
+            <option value="Top" {% if condition2=="Top" %} selected="selected" {% endif %}>Top</option>
+            <option value="Bottom" {% if condition2=="Bottom" %} selected="selected" {% endif %}>Bottom</option>
+            <option value="Left" {% if condition2=="Left" %} selected="selected" {% endif %}>Left</option>
+            <option value="Right" {% if condition2=="Right" %} selected="selected" {% endif %}>Right</option>
+            <option value="Isometric" {% if condition2=="Isometric" %} selected="selected" {% endif %}>Isometric</option>
+            <option value="Flipped Isometric" {% if condition2=="FlippedIsometric" %} selected="selected" {% endif %}>Flipped Isometric</option>
         </select>
 
         <div id="submit"><input type="submit" name="refresh" value="Refresh" class="hover button" onclick="showLoader()"></div>
