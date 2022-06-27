@@ -46,6 +46,9 @@ your ide or using the `cd` command.
 to create your Onshape API Keys. Only create the keys, next step is how to use and save them.
 5. Once you have your two API keys, save them in the file called "OnshapeAPIKey.py", replacing "ACCESS" and "SECRET"
 with the new respective keys you created.
+   1. The file should look like this, with both keys on their own line: <br>
+      `access = 'ACCESS'` <br>
+      `secret = 'SECRET'`
 6. Next make sure you are on the "Rogers" Onshape enterprise, then subscribe to the app found here.
    1. If you are not on the "Rogers" Onshape enterprise, follow the steps below in making your own Onshape App.
 7. Make sure your browser accepts the certificates provided in this GitHub following [these steps](https://github.com/PTC-Education/Onshape-Integration-Guides/blob/main/Flask_Intro.md#3-configure-flask-as-https). 
