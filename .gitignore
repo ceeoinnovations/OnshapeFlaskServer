@@ -132,7 +132,7 @@ dmypy.json
 .DS_Store
 
 # Onshape API and Developer keys 
-OnshapeAPIKey.py
+#OnshapeAPIKey.py
 
 # Pycharm
 .idea

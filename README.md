@@ -38,11 +38,20 @@ This project contains three separate tools:
       3. To check pip is installed, run `pip --version`
          1. I used pip 22.0.4
 2. Download/clone this repository! The easiest method is to "Download Zip", and then unzip the file.
-3. Next (in your python IDE of choice, I recommend PyCharm) run something along the lines of "pip install requirements.txt." 
+3. Next in the terminal (in your python IDE of choice, I recommend PyCharm) run `pip install -r requirements.txt`
    1. Make sure you are inside the file that contains the code when you run this command by either using the terminal in
-your ide, like PyCharm, or using the `cd` command.
-   2. If you are using PyCharm, you can just open the file in PyCharm and press the "install requirement".\
-4. 
+your ide or using the `cd` command.
+   2. If you are using PyCharm, you can just open the file in PyCharm and press the "install requirement" button.
+4. Next follow the instructions [here](https://github.com/PTC-Education/Onshape-Integration-Guides/blob/main/API_Intro.md#2-generating-your-onshape-api-keys)
+to create your Onshape API Keys. Only create the keys, next step is how to use and save them.
+5. Once you have your two API keys, save them in the file called "OnshapeAPIKey.py", replacing "ACCESS" and "SECRET"
+with the new respective keys you created.
+6. Next make sure you are on the "Rogers" Onshape enterprise, then subscribe to the app found here.
+   1. If you are not on the "Rogers" Onshape enterprise, follow the steps below in making your own Onshape App.
+7. Make sure your browser accepts the certificates provided in this GitHub following [these steps](https://github.com/PTC-Education/Onshape-Integration-Guides/blob/main/Flask_Intro.md#3-configure-flask-as-https). 
+   1. You do not need to make your own certificates. Skip the first step and instead start at: "_Then, you need to add 
+this newly created certificates to be a trusted certificate of your computer system._"
+8. To start the Flask Server run `$env:FLASK_APP = "OnshapeFlaskApp.py"; $env:FLASK_ENV= "development" ; flask run --cert=cert.pem --key=key.pem`
 
 ---
 ## Review of Tools: 
