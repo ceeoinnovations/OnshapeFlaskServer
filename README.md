@@ -69,9 +69,9 @@ be run through this flask app, so I encourage checking out the earlier given exa
 [Glasswork](https://cad.onshape.com/glassworks/explorer/#/) and checking out example API calls through PTC's 
 [API playground](https://github.com/PTC-Education/PTC-API-Playground)
 
-<br>
+---
 
-#### Making Your Own Onshape App
+### Making Your Own Onshape App
 1. To set up your own Onshape app through OAuth, follow the instructions provided by PTC's 
 [Onshape Integration Guides](https://github.com/PTC-Education/Onshape-Integration-Guides/blob/main/Flask_Intro.md#41-onshape-integration-through-oauth).
 2. Afterwards, to run the three tools shown here, you need to add three extensions to your app.
@@ -95,7 +95,17 @@ Instructions of the different tools this project creates and how to use them.
 ***IN PROGRESS***
 
 #### - CEEO Rotate & Graph:
-This is a tool for Onshape's **Assembly**.
+This is a tool for Onshape's **Assembly**. It rotates any given part around the Z-Axis, centered at the origin. (Updates
+including other directions are planned but not yet implemented). It always rotates the parts a full 360 degrees, but the
+number of steps it takes to complete that rotation can be edited (default 6). When the part is being rotates, two part
+can be selected and their x and y position is tracked and graphed. The first part is the "Input" (normally the moving
+part) and the second part is the "Output" (the part you want to observe as it moves along). I recommend making little
+small trackers and attacking them to the points you want to specifically observe as the position of a big piece is 
+the center of the piece, not the edges you probably want to track. Examples below!
+
+![Example Screen Recording](C:\Users\alexk\Desktop\CEEO\OnShapeFlaskServer\examples\FourBarRotation.gif)
+
+![The Produced Graph](C:\Users\alexk\Desktop\CEEO\OnShapeFlaskServer\examples\Graph.jfif)
 
 #### - CEEO Image Maker:
 This is a tool for Onshape's **Part Studio**.
