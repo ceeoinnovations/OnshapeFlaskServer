@@ -60,7 +60,10 @@ with the new respective keys you created.
    1. You do not need to make your own certificates. Skip the first step and instead start at: "_Then, you need to add 
 this newly created certificates to be a trusted certificate of your computer system._"
 8. To start the Flask Server run one of the commands below (depending on your terminal and operating system):
-   1. Windows powershell: `$env:FLASK_APP = "OnshapeFlaskApp.py"; $env:FLASK_ENV= "development" ; flask run --cert=cert.pem --key=key.pem`
+   1. Powershell: `$env:FLASK_APP = "OnshapeFlaskApp.py"; $env:FLASK_ENV= "development" ; $env:FLASK_RUN_PORT = 5687 ; flask run --cert=cert.pem --key=key.pem`
+   2. CMD: `set FLASK_APP=OnshapeFlaskApp.py & set FLASK_ENV=development & set FLASK_RUN_PORT=5687 & flask run --cert=cert.pem --key=key.pem`
+   3. Bash: `export FLASK_APP=OnshapeFlaskApp.py ; export FLASK_ENV=development ; export FLASK_RUN_PORT=5687 ; flask run --cert=cert.pem --key=key.pem`
+   4. Fish Shell: `set -x FLASK_APP OnshapeFlaskApp.py ; set -x FLASK_ENV development ; set -x FLASK_RUN_PORT 5687 ; flask run --cert=cert.pem --key=key.pem`
 
 <br>
 
@@ -81,11 +84,11 @@ be run through this flask app, so I encourage checking out the earlier given exa
       3. Go to "_Extensions_"
       4. Press "_Add Extension_"
    2. CEEO Rotate & Graph: In location `Element right panel` with context of a `Selected assembly` and an action url 
-   of `https://127.0.0.1:5000/home?documentId={$documentId}&workspaceId={$workspaceId}&elementId={$elementId}`
+   of `https://127.0.0.1:5687/home?documentId={$documentId}&workspaceId={$workspaceId}&elementId={$elementId}`
    3. CEEO Image Maker: In location `Element right panel` with context of a `Selected part studio` and an action url
-   of `https://127.0.0.1:5000/home2?documentId={$documentId}&workspaceId={$workspaceId}&elementId={$elementId}`
+   of `https://127.0.0.1:5687/home2?documentId={$documentId}&workspaceId={$workspaceId}&elementId={$elementId}`
    4. CEEO GIF Maker: In location `Element right panel` with context of a `Selected assembly` and an action url
-   of `https://127.0.0.1:5000/home3?documentId={$documentId}&workspaceId={$workspaceId}&elementId={$elementId}`
+   of `https://127.0.0.1:5687/home3?documentId={$documentId}&workspaceId={$workspaceId}&elementId={$elementId}`
 
 The rest you can edit as you see fit.
 
