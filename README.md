@@ -28,20 +28,24 @@ This project contains three separate tools:
 
 ---
 ## How To Run:
+*These instructions where written with Windows machines in mind, but should work for all machines*
+
 
 1. Download python
    1. Make sure the PATH is correctly setup and PIP is also installed
-      1. To check python is installed, run `python --version` or `py --version`
+      1. To check python is installed, run `python --version` or `py --version` in terminal.
+([How to access you terminal](https://www.ionos.com/help/email/troubleshooting-mail-basicmail-business/access-the-command-prompt-or-terminal/#:~:text=Click%20Start%20and%20search%20for,cmd%22%20and%20then%20click%20OK.))
          1. I used Python 3.10.5 - 64 bit
-      2. To check your python PATH works, run `python` or `py` in terminal.
+      3. To check your python PATH works, run `python` or `py` in terminal.
          1. You can exit with `exit()` or `^Z` (Ctrl-Z)
-      3. To check pip is installed, run `pip --version`
+      4. To check pip is installed, run `pip --version`
          1. I used pip 22.0.4
 2. Download/clone this repository. The easiest method is to "Download Zip", and then unzip the file.
-3. Next in the terminal (in your python IDE of choice, I recommend PyCharm) run `pip install -r requirements.txt`
+3. Next in the terminal run `pip install -r requirements.txt`
    1. Make sure you are inside the file that contains the code when you run this command by either using the terminal in
 your ide or using the `cd` command.
-   2. If you are using PyCharm, you can just open the file in PyCharm and press the "install requirement" button.
+   2. If you are using PyCharm (what I used), you can just open the file in PyCharm and press the "install requirement"
+button.
 4. Next follow the instructions
 [here](https://github.com/PTC-Education/Onshape-Integration-Guides/blob/main/API_Intro.md#2-generating-your-onshape-api-keys)
 to create your Onshape API Keys. Only create the keys, next step is how to use and save them.
@@ -54,11 +58,13 @@ with the new respective keys you created.
       `secret = 'SECRET'`
 6. Next make sure you are on the "Rogers" Onshape enterprise, then subscribe to the app called
 [_Tufts CEEO Flask App_](https://appstore.onshape.com/apps/Design%20&%20Documentation/L2TGY3UQFV4RPW7XMYDTQ76QXIK6NYLFUBT7NSI=/description).
-   1. If you are not on the "Rogers" Onshape enterprise, follow the steps below in making your own Onshape App.
+   1. If you are not on the "Rogers" Onshape enterprise, follow the steps below (**Making Your Own Onshape App**) in
+making your own Onshape App.
 7. Make sure your browser accepts the certificates provided in this GitHub following
-[these steps](https://github.com/PTC-Education/Onshape-Integration-Guides/blob/main/Flask_Intro.md#3-configure-flask-as-https). 
-   1. You do not need to make your own certificates. Skip the first step and instead start at: "_Then, you need to add 
-this newly created certificates to be a trusted certificate of your computer system._"
+[3. Configure Flask as HTTPS](https://github.com/PTC-Education/Onshape-Integration-Guides/blob/main/Flask_Intro.md#3-configure-flask-as-https). 
+   1. You do not need to make your own certificates as certificates have been provided titled "cert.pem" and "key.pem".
+Skip the first step and instead start at: "_Then, you need to add this newly created certificates to be a trusted
+certificate of your computer system._"
 8. To start the Flask Server run one of the commands below (depending on your terminal and operating system):
    1. Powershell: `$env:FLASK_APP = "OnshapeFlaskApp.py"; $env:FLASK_ENV= "development" ; $env:FLASK_RUN_PORT = 5687 ; flask run --cert=cert.pem --key=key.pem`
    2. CMD: `set FLASK_APP=OnshapeFlaskApp.py & set FLASK_ENV=development & set FLASK_RUN_PORT=5687 & flask run --cert=cert.pem --key=key.pem`
@@ -67,28 +73,29 @@ this newly created certificates to be a trusted certificate of your computer sys
 
 <br>
 
-That is it! Feel free to edit the flask app and learn how it works through its commits. Theoretically any API call can
-be run through this flask app, so I encourage checking out the earlier given examples of their documentation provided on
-[Glasswork](https://cad.onshape.com/glassworks/explorer/#/) and checking out example API calls through PTC's 
-[API playground](https://github.com/PTC-Education/PTC-API-Playground)
+That is it! Feel free to edit the flask app and learn how it works through the left behind commits. Theoretically any
+API call can be run through this flask app, so I encourage checking out the earlier given examples of their
+documentation provided on [Glasswork](https://cad.onshape.com/glassworks/explorer/#/) and checking out example API
+calls through PTC's [API playground](https://github.com/PTC-Education/PTC-API-Playground)
 
 ---
 
 ### Making Your Own Onshape App
-1. To set up your own Onshape app through OAuth, follow the instructions provided by PTC's 
-[Onshape Integration Guides](https://github.com/PTC-Education/Onshape-Integration-Guides/blob/main/Flask_Intro.md#41-onshape-integration-through-oauth).
+1. To set up your own Onshape app through OAuth, follow the instructions provided by PTC's Onshape integration guides
+[4.1. Onshape integration through OAuth](https://github.com/PTC-Education/Onshape-Integration-Guides/blob/main/Flask_Intro.md#41-onshape-integration-through-oauth).
 2. Afterwards, to run the three tools shown here, you need to add three extensions to your app.
    1. First to add extensions:
       1. Go to "_OAuth applications_" in the Onshape [Developer Portal](https://dev-portal.onshape.com/)
       2. Select your app
       3. Go to "_Extensions_"
       4. Press "_Add Extension_"
-   2. CEEO Rotate & Graph: In location `Element right panel` with context of a `Selected assembly` and an action url 
-   of `https://127.0.0.1:5687/home?documentId={$documentId}&workspaceId={$workspaceId}&elementId={$elementId}`
-   3. CEEO Image Maker: In location `Element right panel` with context of a `Selected part studio` and an action url
-   of `https://127.0.0.1:5687/home2?documentId={$documentId}&workspaceId={$workspaceId}&elementId={$elementId}`
-   4. CEEO GIF Maker: In location `Element right panel` with context of a `Selected assembly` and an action url
-   of `https://127.0.0.1:5687/home3?documentId={$documentId}&workspaceId={$workspaceId}&elementId={$elementId}`
+   2. Follow the steps bellow to set up each tool. Anything not mentioned you can edit as you see fit:
+      1. **CEEO Rotate & Graph**: In location `Element right panel` with context of a `Selected assembly` and an action
+      url of `https://127.0.0.1:5687/home?documentId={$documentId}&workspaceId={$workspaceId}&elementId={$elementId}`
+      2. **CEEO Image Maker**: In location `Element right panel` with context of a `Selected part studio` and an action
+      url of `https://127.0.0.1:5687/home2?documentId={$documentId}&workspaceId={$workspaceId}&elementId={$elementId}`
+      3. **CEEO GIF Maker**: In location `Element right panel` with context of a `Selected assembly` and an action url
+      of `https://127.0.0.1:5687/home3?documentId={$documentId}&workspaceId={$workspaceId}&elementId={$elementId}`
 
 The rest you can edit as you see fit.
 
@@ -104,10 +111,11 @@ including other directions are planned but not yet implemented). It always rotat
 number of steps it takes to complete that rotation can be edited (default 6). When the part is being rotates, two part
 can be selected and their x and y position is tracked and graphed. The first part is the "Input" (normally the moving
 part) and the second part is the "Output" (the part you want to observe as it moves along). I recommend making little
-small trackers and attacking them to the points you want to specifically observe as the position of a big piece is 
+small trackers and attaching them to the points you want to specifically observe as the position of a big piece is 
 the center of the piece, not the edges you probably want to track. Examples below!
 
-Example Screen Recording: <br> ![](./examples/FourBarRotation.gif)
+Example Screen Recording: Light blue bar is Input, and the position trackers are orange going left to right <br>
+![](./examples/FourBarRotation.gif)
 
 The Produced Result: <br> ![](./examples/Graph.jfif)
 
@@ -136,9 +144,21 @@ an image saved as jpg. Change if edges are shown, what the height and width of t
 the file. Also change how long each frame is shown with duration, where the default 0 makes a seamless transition.
 Creating the GIF does take a longer time the more frames there are in the GIF, along with increasing the size. Adding
 more frames is the easiest way to slow down the GIF while keeping it smooth, but duration of each frame also works.
-Progressed is displayed in the terminal where the Flask app is, but sadly not on the webpage. The example below skipped
-about 30-60 seconds of loading the GIF, does not move the pieces in real time like Rotate & Graph, all work is behind
-the scenes by just doing what was done in the Image Maker, multiple times. GIFs are saved at `static/images`.
+Progress is displayed in the terminal where the Flask app is, but sadly not on the webpage. The example below skipped
+about 30-60 seconds of loading the GIF. This tool does not move the pieces in real time like Rotate & Graph as all work
+is behind the scenes by just doing what was done in the Image Maker, multiple times. GIFs are saved at `static/images`.
+
+##### GIF Settings:
+**IN PROGRESS**
+
+- **Frames** (Integer): Edits how many frames are in the GIF. More frames takes longer to load, but also can make the GIF move slower
+and therefore look smoother as 60 frames of 360 degrees is 6 degrees each frame instead of 10 frames of 360 at 36 
+degrees each frame.
+- **Rotation** 
+  - **Rotation Direction**(Boolean): Multiple directions can be selected from the listed X, Y, and Z direction. When
+  selected it rotates the camera around that axis, and selecting none of them equals no rotation.
+  - **Total Rotation**(Integer): Edits how many degrees the camera spins in its given frames. Ending in a multiple of
+  360 will make the GIF perfectly loop. Positive values are clockwise, negative counterclockwise. 
 
 Example Screen Recording: <br> ![](./examples/GifMaker.gif)
 
