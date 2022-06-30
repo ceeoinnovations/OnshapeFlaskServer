@@ -136,29 +136,63 @@ Example Image: <br> ![](./examples/ExampleImage.jfif)
 #### - CEEO GIF Maker:
 This is a tool for Onshape's **Assembly**. This function creates a GIF. Its main purpose is to create a GIF where the 
 camera rotates around the object to give the object the effect that it is spinning. It also has the options to zoom in
-and out throughout the GIF by setting the zoom start/end, along with an option to set the middle zoom point. The
-starting view angle can be any of the preprogrammed in angles (6 basic directions and isometric), along with any named
-views. This function is multipurpose, set rotation to 0 or uncheck all directions to make it not rotate and only
-zoom in and out. Turn on automatic zoom and the object will always be center of the frame. Set frames to 1 to just get
-an image saved as jpg. Change if edges are shown, what the height and width of the GIF will be, along with the name of
-the file. Also change how long each frame is shown with duration, where the default 0 makes a seamless transition.
-Creating the GIF does take a longer time the more frames there are in the GIF, along with increasing the size. Adding
-more frames is the easiest way to slow down the GIF while keeping it smooth, but duration of each frame also works.
-Progress is displayed in the terminal where the Flask app is, but sadly not on the webpage. The example below skipped
-about 30-60 seconds of loading the GIF. This tool does not move the pieces in real time like Rotate & Graph as all work
-is behind the scenes by just doing what was done in the Image Maker, multiple times. GIFs are saved at `static/images`.
+and out throughout the GIF by setting the zoom start/mid/end. This tool is multipurpose and changing the various 
+settings can have widely different results. Can generate JPGs as well if frames is set to 1. Adding more frames is the
+easiest way to slow down the GIF while keeping it smooth, but duration of each frame also works. Progress is displayed
+in the terminal where the Flask app is, but sadly not on the webpage. The example below skipped about 30-60 seconds of
+loading the GIF. This tool does not move the pieces in real time like Rotate & Graph as all work is behind the scenes
+by just doing what was done in the Image Maker, multiple times. GIFs are saved at `static/images`.
 
 ##### GIF Settings:
-**IN PROGRESS**
 
 - **Frames** (Integer): Edits how many frames are in the GIF. More frames takes longer to load, but also can make the GIF move slower
 and therefore look smoother as 60 frames of 360 degrees is 6 degrees each frame instead of 10 frames of 360 at 36 
-degrees each frame.
-- **Rotation** 
-  - **Rotation Direction**(Boolean): Multiple directions can be selected from the listed X, Y, and Z direction. When
+degrees each frame. If only one frame is given a JPG is returned instead of a GIF.
+- **Rotation**: Makes the camera rotate around the object, set rotation to 0 or turn off all directions to disable.
+  - **Rotation Direction** (Boolean): Multiple directions can be selected from the listed X, Y, and Z direction. When
   selected it rotates the camera around that axis, and selecting none of them equals no rotation.
-  - **Total Rotation**(Integer): Edits how many degrees the camera spins in its given frames. Ending in a multiple of
-  360 will make the GIF perfectly loop. Positive values are clockwise, negative counterclockwise. 
+  - **Total Rotation** (Integer): Edits how many degrees the camera spins in its given frames. Ending in a multiple of
+  360 will make the GIF perfectly loop. Positive values are clockwise, negative values counterclockwise. 
+- **Zoom**: Required part of the GIF. Can either be done automatically through auto zoom, can be set to stay constant
+through starting zoom, or can be set to change through the mid and end zoom variables. The view angle can also be
+changed between the 7 normal zooms (Top, Bottom, Left, Right, Front, Back, Isometric) along with any created named
+views.
+    - **Automatically Zoom** (Boolean): This is a feature that when enabled sets the zoom to 0. A zoom of 0 makes the 
+  assembly fill the screen and adjusts as the camera moves either zooming in or out. With the setting on, no part of the
+  assembly will ever be off-screen.
+    - **Starting Zoom** (Integer): Determines the starting value the zoom of the GIF starts at. If no other zoom is
+  enabled, this zoom while stay constant and not change throughout the GIF.
+    - **Middle Zoom** (Integer): Determines the mid-point zoom value of the GIF. Starts disabled by default, and can
+only be enabled if _Ending Zoom_ is also enabled. This can create a zoom in and back out feature for infinitely looping
+GIFs.
+    - **Ending Zoom** (Integer): Determines the ending value the zoom of the GIF starts at. Starts disabled by default,
+but is necessary to use middle zoom. This can be set to the same value as middle zoom if a zoom in and then stay effect
+is wanted. If not set to the same value as the starting zoom, the GIF will likely not perfectly loop.
+      - **Pixel Size** (Float): Behind the scenes,"pixelSize" stands for the zoom of each frame with smaller values
+resulting in the camera zooming in farther (objects gets bigger). These decimal values resulted in confusion for anyone
+using this app, so they were converted to integers and their direction reversed. To the user bigger numbers actually
+means the camera zooms in and the object gets bigger, and the integer they input is converted behind the scenes to a
+float.
+    - **View Angle** (Choice of Views): This determines what angle the camera starts at from the begging of the GIF. 
+Any of the 7 normal zooms (Top, Bottom, Left, Right, Front, Back, Isometric) along with any created named views the user
+made can be chosen.
+- **Misc Features**:
+  - **Show Edges** (Boolean): This is a feature that changes if edges are shown or not. Is disabled by default as for
+most objects, like the example skateboard, showing edges can be a bad thing, like the edges of where a curve starts
+instead of a smooth transition between. For objects with defined edges like LEGO, this feature can look amazing.
+  - **Loop GIF** (Boolean): This feature decides if the GIF loops and starts again when it reaches its end or not. Is
+enabled by default as one of the main liked features about GIFs is when they loop. 
+  - **Duration** (Integer): Determines how long each frame is shown in milliseconds. The default is 20 milliseconds,
+which means the GIF plays at 50 frames per second which is the max speed most browsers can handle. This app can generate
+frames at 100 frames per second when a duration of 10 milliseconds at the minimum, but most browsers are capped at 50
+fps and the average monitor is also only capable of 60 Hertz or 60 fps reliably.
+  - **Filename** (String): This determines what the name of the GIF is saved as. File extension (JPG vs GIF) is still
+determined by if one frame or more is given.
+  - **Height** (Integer): Determines the height in pixels of the resulting GIF. 
+  - **Width** (Integer): Determines the width in pixels of the resulting GIF.
+    - Min of 1, Max of 9459 each, just to conserve space and prevent error in API calls and python functions.
+    - Increasing _Height_ or _Width_ will increase time it takes to generate a GIF, while decreasing either will
+decrease time it takes to create a GIF.
 
 Example Screen Recording: <br> ![](./examples/GifMaker.gif)
 
