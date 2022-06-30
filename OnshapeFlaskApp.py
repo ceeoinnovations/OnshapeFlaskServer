@@ -241,7 +241,7 @@ def login3():
     zoom2 = False   # End Zoom
     direction = 1   # 1=Z, 2=Y, 3=ZY, 4=X, 5=XZ, 6=YX, 7=XYZ as x & y swapped for this app.
     name = "OnshapeGIF"   # Filename
-    duration = 0   # Duration of each frame
+    duration = 20   # Duration of each frame
     edges = False   # Show edges
     height = 600   # Height of GIF, pixels
     width = 1000   # Width of GIF, pixels
