@@ -36,6 +36,7 @@ This project contains three separate tools:
       1. To check python is installed, run `python --version` or `py --version` in terminal.
 ([How to access you terminal](https://www.ionos.com/help/email/troubleshooting-mail-basicmail-business/access-the-command-prompt-or-terminal/#:~:text=Click%20Start%20and%20search%20for,cmd%22%20and%20then%20click%20OK.))
          1. I used Python 3.10.5 - 64 bit
+         2. Having multiple python versions can cause issues when trying to run Flask
       3. To check your python PATH works, run `python` or `py` in terminal.
          1. You can exit with `exit()` or `^Z` (Ctrl-Z)
       4. To check pip is installed, run `pip --version`
@@ -57,7 +58,7 @@ with the new respective keys you created.
       `access = 'ACCESS'` <br>
       `secret = 'SECRET'`
 6. Next make sure you are on the "Rogers" Onshape enterprise, then subscribe to the app called
-[_Tufts CEEO Flask App_](https://appstore.onshape.com/apps/Design%20&%20Documentation/L2TGY3UQFV4RPW7XMYDTQ76QXIK6NYLFUBT7NSI=/description).
+[_Tufts CEEO Flask App_](https://appstore.onshape.com/apps/Design%20&%20Documentation?sort=date) under Design & Documentation.
    1. If you are not on the "Rogers" Onshape enterprise, follow the steps below (**Making Your Own Onshape App**) in
 making your own Onshape App.
 7. Make sure your browser accepts the certificates provided in this GitHub following
@@ -70,6 +71,7 @@ certificate of your computer system._"
    2. CMD: `set FLASK_APP=OnshapeFlaskApp.py & set FLASK_ENV=development & set FLASK_RUN_PORT=5687 & flask run --cert=cert.pem --key=key.pem`
    3. Bash: `export FLASK_APP=OnshapeFlaskApp.py ; export FLASK_ENV=development ; export FLASK_RUN_PORT=5687 ; flask run --cert=cert.pem --key=key.pem`
    4. Fish Shell: `set -x FLASK_APP OnshapeFlaskApp.py ; set -x FLASK_ENV development ; set -x FLASK_RUN_PORT 5687 ; flask run --cert=cert.pem --key=key.pem`
+9. Sometimes the website will be blocked by your web browser. Open https://127.0.0.1:5687 in a new tab and allow it.
 
 <br>
 

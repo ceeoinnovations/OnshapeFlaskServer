@@ -228,7 +228,7 @@ def login3():
         EID = eid
 
     # Set default input values
-    frames = 20   # Frames in GIF
+    frames = 50   # Frames in GIF
     rotation = 360   # Degrees GIF rotates
     # Behind the scenes the values of zooms are like 0.001, but then converted to make it easier to read for the user
     zoom_start = (.1001-0.001) * 10000
