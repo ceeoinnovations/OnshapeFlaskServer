@@ -31,7 +31,7 @@ secret_key = ''
 DID = ''
 WID = '' 
 EID = ''
-STEP = 6
+STEP = 30
 partsDictionary = {}
 viewsDictionary = {}
 selected1 = "Input <1>"
@@ -73,7 +73,8 @@ def login():
     global EID, WID, DID, STEP, partsDictionary, selected1, selected2, selected3
 
     # Defines default values
-    STEP = 6
+    STEP = 30
+    direction = 1  # 1=Z, 2=X, 3=ZX, 4=Y, 5=YZ, 6=XY, 7=XYZ
     selected1 = "Input <1>"
     selected2 = "Position Tracker <1>"
     selected3 = "Position Tracker <2>"
@@ -95,7 +96,7 @@ def login():
     return render_template('RotateAndGraph.html', DID=DID, WID=WID, EID=EID, STEP=STEP, condition1=False,
                            return1=list_parts_assembly(client, url).split('\n'), return2=list(partsDictionary.keys()),
                            return2_len=len(partsDictionary.keys()), selected1=selected1, selected2=selected2,
-                           selected3=selected3)
+                           selected3=selected3, DIRECTION=direction)
 
 
 # Graph page for part assembly, CEEO Rotate extension. Almost the exact same as home, but takes in input values and
@@ -119,6 +120,9 @@ def graph():
     selected1 = request.args.get('rotate_part')   # What part to rotate
     selected2 = request.args.get('input_track')   # What part to track and graph as input
     selected3 = request.args.get('output_track')   # What part to track and graph as output
+    direction = 0 + 4 * bool(request.args.get('rotateX'))
+    direction = direction + 2 * bool(request.args.get('rotateY'))
+    direction = direction + 1 * bool(request.args.get('rotateZ'))
 
     client = Client(configuration={"base_url": base, "access_key": app_key, "secret_key": secret_key})
 
@@ -126,15 +130,28 @@ def graph():
     # Define variables
     input_x_pos = []
     input_y_pos = []
+    input_z_pos = []
     output_x_pos = []
     output_y_pos = []
+    output_z_pos = []
 
     move_id = partsDictionary[selected1]
     in_id = partsDictionary[selected2]
     out_id = partsDictionary[selected3]
 
     # Creating rotation step
-    rotation_step = 2 * np.pi / STEP  # in radian
+    total = 2 * np.pi
+    if direction >= 7:
+        # If direction is all three directions, due to geometry need to decide rotation by root 3
+        total = total / np.sqrt(3)
+    elif direction >= 3 and direction != 4:
+        # If direction is in two directions, due to geometry need to decide rotation by root 2
+        total = total / np.sqrt(2)
+    elif direction == 0:
+        # If direction is 0, set rotation to 0
+        total = 0
+    rotation_step = total / STEP  # in radian
+
     url = '{}/documents/{}/w/{}/e/{}'.format(str(base), str(DID), str(WID), str(EID))
 
     # Check for initial positions and assembly info
@@ -142,14 +159,18 @@ def graph():
     in_pos = get_position(assembly_info, in_id)
     out_pos = get_position(assembly_info, out_id)
     if in_pos and out_pos:
+        start = in_pos[0]
         # Add initial positions to position array
         input_x_pos.append(in_pos[0])
         input_y_pos.append(in_pos[1])
         output_x_pos.append(out_pos[0])
         output_y_pos.append(out_pos[1])
+        print(in_pos)
+        input_z_pos.append(in_pos[2])
+        output_z_pos.append(out_pos[2])
         for i in range(STEP):
             # Rotate the input by rotation_step
-            rotate_input(client, assembly_info, url, move_id, rotation_step)
+            rotate_input(client, assembly_info, url, move_id, rotation_step, direction)
             # Get the x-y position of the input and output position trackers
             assembly_info = get_assembly_definition(client, url)
             in_pos = get_position(assembly_info, in_id)
@@ -158,12 +179,21 @@ def graph():
             input_y_pos.append(in_pos[1])
             output_x_pos.append(out_pos[0])
             output_y_pos.append(out_pos[1])
+            input_z_pos.append(in_pos[2])
+            output_z_pos.append(out_pos[2])
+        print(total - rotation_step * STEP)
 
     # Plot the path of the input and output positions data
-    fig = Figure()
-    ax = fig.add_subplot(1, 1, 1)
-    ax.plot(input_x_pos, input_y_pos, label='Input')
-    ax.plot(output_x_pos, output_y_pos, label='Output')
+    fig = plt.figure()
+    ax = plt.axes(projection='3d')
+    ax.plot3D(input_x_pos, input_y_pos, input_z_pos, label='Input')
+    ax.plot3D(output_x_pos, output_y_pos, output_z_pos, label='Output')
+    ax.scatter3D(input_x_pos, input_y_pos, input_z_pos, cmap='Blues')
+    ax.scatter3D(output_x_pos, output_y_pos, output_z_pos, cmap='Oranges')
+
+    ax.set_xlabel('x')
+    ax.set_ylabel('y')
+    ax.set_zlabel('z')
     ax.legend()
 
     # Send output image to user using template 'RotateAndGraph.html'
@@ -173,7 +203,8 @@ def graph():
     return render_template('RotateAndGraph.html', image1=base64.b64encode(output.getvalue()).decode("utf-8"),
                            DID=DID, WID=WID, EID=EID, STEP=STEP, return1=list_parts_assembly(client, url).split('\n'),
                            return2=list(partsDictionary.keys()), return2_len=len(partsDictionary.keys()),
-                           selected1=selected1, selected2=selected2, selected3=selected3, condition1=True)
+                           selected1=selected1, selected2=selected2, selected3=selected3, condition1=True,
+                           DIRECTION=direction)
 
 
 # -------------------------#
@@ -335,7 +366,7 @@ def gif():
 # -------------------------------------------------------------------------------------------#
 # This function rotates the input link of the mechanism with a fixed rotation step in degree; changes are
 # made to the actual model, credit to: Felix Deng @ https://github.com/PTC-Education/Four-Bar-Mechanism
-def rotate_input(client, assembly, url: str, part_id: str, rotation: float):
+def rotate_input(client, assembly, url: str, part_id: str, rotation: float, direction: int):
 
     identity_matrix = np.reshape([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1], (4, 4))
     occurrences = assembly['rootAssembly']['occurrences']
@@ -347,7 +378,7 @@ def rotate_input(client, assembly, url: str, part_id: str, rotation: float):
         print("Part not found!")
         return None
     
-    rot_mat = np.matmul(identity_matrix, clockwise_spinz(rotation))
+    rot_mat = np.matmul(identity_matrix, clockwise_spin(rotation, direction))
     transform_mat = np.matmul(identity_matrix, rot_mat)
 
     fixed_url = '/api/assemblies/d/did/w/wid/e/eid/occurrencetransforms'
@@ -391,7 +422,7 @@ def get_assembly_definition(client, url: str):
 def get_position(assembly, part_id: str):
     for occ in assembly['rootAssembly']['occurrences']: 
         if occ['path'][0] == part_id:
-            return occ['transform'][3], occ['transform'][7]
+            return occ['transform'][3], occ['transform'][7], occ['transform'][11]
     print("Part not found!") 
     return None 
 
