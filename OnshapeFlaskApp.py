@@ -194,6 +194,11 @@ def graph():
     ax.set_xlabel('x')
     ax.set_ylabel('y')
     ax.set_zlabel('z')
+    ax.axes.xaxis.set_ticklabels([])
+    ax.axes.yaxis.set_ticklabels([])
+    ax.axes.zaxis.set_ticklabels([])
+
+    plt.grid(True)
     ax.legend()
 
     # Send output image to user using template 'RotateAndGraph.html'
