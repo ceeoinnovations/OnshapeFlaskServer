@@ -1,0 +1,41 @@
+<!doctype html>
+
+<head>
+    <title>CEEO Flask App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+
+<body>
+    <header><h1> Tufts CEEO App </h1></header>
+    <hr>
+
+    <div>
+        <iframe src="http://localhost:5688/?kernel=python&toolbar=1" width="100%" height="600"></iframe>
+    </div>
+    <hr>
+
+    <button onclick="hideidList()" class="hover">Document ID's</button>
+    <div id="idList">
+        <p id="did">DocumentId: {{DID}}</p>
+        <p id="wid">WorkspaceId: {{WID}}</p>
+        <p id="eid">ElementId: {{EID}}</p>
+    </div>
+
+    <form action="/jupyter">
+        <br>
+        <input type="submit" value="Reset" class="hover button">
+    </form>
+    <br>
+
+</body>
+
+<script>
+function hideidList() {
+  var x = document.getElementById("idList");
+  if (x.style.display === "block") {
+    x.style.display = "none";
+  } else {
+    x.style.display = "block";
+  }
+}
+</script>

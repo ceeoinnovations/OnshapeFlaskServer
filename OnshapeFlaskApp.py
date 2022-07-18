@@ -366,6 +366,125 @@ def gif():
                            HEIGHT=height, WIDTH=width, ROTATION=rotation)
 
 
+# ----------------------------#
+# ----CEEO Jupyter------------#
+# ----------------------------#
+# Home page for part assembly, CEEO Jupyter
+@app.route('/jupyter')
+def jupyter():
+    global EID, WID, DID
+
+    did = request.args.get('documentId')
+    wid = request.args.get('workspaceId')
+    eid = request.args.get('elementId')
+
+    if did or wid or eid:
+        DID = did
+        WID = wid
+        EID = eid
+
+    # Generate Onshape URL and client for API calls
+    # client = Client(configuration={"base_url": base, "access_key": app_key, "secret_key": secret_key})
+    # url = '{}/documents/{}/w/{}/e/{}'.format(base, str(DID), str(WID), str(EID))
+
+    # Returns html webpage and make api calls using template 'Jupyter.html'
+    return render_template('Jupyter.html', DID=DID, WID=WID, EID=EID, STEP=STEP)
+
+
+# ----------------------------#
+# ----CEEO Educate------------#
+# ----------------------------#
+# Home page for part assembly, CEEO Educate
+@app.route('/educate')
+def educate():
+    global EID, WID, DID
+
+    did = request.args.get('documentId')
+    wid = request.args.get('workspaceId')
+    eid = request.args.get('elementId')
+
+    if did or wid or eid:
+        DID = did
+        WID = wid
+        EID = eid
+
+    # Generate Onshape URL and client for API calls
+    client = Client(configuration={"base_url": base, "access_key": app_key, "secret_key": secret_key})
+    # url = '{}/documents/{}/w/{}/e/{}'.format(base, str(DID), str(WID), str(EID))
+
+    fixed_url = '/api/partstudios/d/' + DID + '/w/' + WID + '/e/' + EID + '/features'
+    # fixed_url = '/api/partstudios/d/' + DID + '/w/' + WID + '/e/' + EID + '/sketches'
+    # FW1s5mEqnjF2jHl_0   7K1fPFkx5x8J   Rh3FOTqGs6yq
+
+    # GET OLD SKETCH
+    method = 'GET'
+    params = {}
+    payload = {}
+    headers = {'Accept': 'application/vnd.onshape.v1+json; charset=UTF-8;qs=0.1',
+               'Content-Type': 'application/json'}
+
+    get_response = client.api_client.request(method, url=base + fixed_url, query_params=params, headers=headers,
+                                         body=payload)
+    # fixed_url = '/api/partstudios/d/' + DID + '/w/' + WID + '/e/' + EID + '/features'
+    # get_response2 = client.api_client.request(method, url=base + fixed_url, query_params=params, headers=headers,
+    #                                          body=payload)
+    # print(json.loads(response.data)["features"][0]["message"]["entities"][0]["message"]["geometry"]["message"])
+
+    # # REPLACE SKETCH
+    # fixed_url = fixed_url + '/featureid/fid'
+    # fid = json.loads(response.data)["features"][0]["message"]["featureId"]
+    # fixed_url = fixed_url.replace('fid', fid)
+    # # END REPLACE SKETCH
+
+    # # CREATE NEW SKETCH
+    # newFeature = json.loads(get_response.data)["features"][0]
+    # # newFeature["message"]["entities"][0]["message"]["geometry"]["message"]["radius"] = 0.01
+    # newFeature["message"]["constraints"][1]["message"]["parameters"][1]["message"]["expression"] = '50 mm'
+    # # newFeature["message"]["entities"] = []
+    # # newFeature["message"]["constraints"] = []
+    # newFeature["message"]["name"] = "Sketch 2"
+    # # newFeature["message"]["featureId"] = ""
+    #
+    # # print(newFeature)
+    #
+    # method = 'POST'
+    # params = {}
+    # payload = {'feature': newFeature,
+    #            'serializationVersion': json.loads(get_response.data)["serializationVersion"],
+    #            'sourceMicroversion': json.loads(get_response.data)["sourceMicroversion"]}
+    # headers = {'Accept': 'application/vnd.onshape.v1+json; charset=UTF-8;qs=0.1',
+    #            'Content-Type': 'application/json'}
+    #
+    # response = client.api_client.request(method, url=base + fixed_url, query_params=params, headers=headers,
+    #                                      body=payload)
+    # # END OF NEW SKETCH
+
+    # # CREATE NEW SKETCH
+    # newFeature = json.loads(get_response.data)["features"][1]
+    # newFeature["message"]["parameters"][3]["message"]["queries"][0]["message"]["geometryIds"][0] = 'JDC'
+    # newFeature["message"]["name"] = "Revolve 2"
+    # newFeature["message"]["featureId"] = ""
+    # # print(newFeature)
+    #
+    # method = 'POST'
+    # params = {}
+    # payload = {'feature': newFeature,
+    #            'serializationVersion': json.loads(get_response.data)["serializationVersion"],
+    #            'sourceMicroversion': json.loads(get_response.data)["sourceMicroversion"]}
+    # headers = {'Accept': 'application/vnd.onshape.v1+json; charset=UTF-8;qs=0.1',
+    #            'Content-Type': 'application/json'}
+    #
+    # response = client.api_client.request(method, url=base + fixed_url, query_params=params, headers=headers,
+    #                                      body=payload)
+    # # END OF NEW SKETCH
+
+    parsed = json.loads(get_response.data)
+    # parsed2 = json.loads(get_response2.data)
+    # print(parsed)
+    # Returns html webpage and make api calls using template 'Educate.html'
+    return render_template('Educate.html', DID=DID, WID=WID, EID=EID, STEP=STEP, FEATURES=parsed)
+
+
 # -------------------------------------------------------------------------------------------#
 # ------------------ Helper Functions -------------------------------------------------------#
 # -------------------------------------------------------------------------------------------#
@@ -397,8 +516,7 @@ def rotate_input(client, assembly, url: str, part_id: str, rotation: float, dire
     payload = {'isRelative': True,
                'occurrences': [occurrence],
                'transform': list(np.reshape(transform_mat, -1))}
-    headers = {'Accept': 'application/vnd.onshape.v1+json; charset=UTF-8;qs=0.1',
-               'Content-Type': 'application/json'}
+    headers = {'Accept': 'application/vnd.onshape.v1+json; charset=UTF-8;qs=0.1', 'Content-Type': 'application/json'}
 
     client.api_client.request(method, url=base + fixed_url, query_params=params, headers=headers, body=payload)
 

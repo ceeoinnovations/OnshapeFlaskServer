@@ -139,3 +139,6 @@ dmypy.json
 
 # static images
 image.jpg
+
+# Response Viewer for reading JSON
+ResponseViewer.py
