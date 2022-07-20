@@ -1,0 +1,106 @@
+{
+	"feature": {
+		"type": 151,
+		"typeName": "BTMSketch",
+		"message": {
+			"entities": [{
+				"type": 4,
+				"typeName": "BTMSketchCurve",
+				"message": {
+					"geometry": {
+						"type": 115,
+						"typeName": "BTCurveGeometryCircle",
+						"message": {
+							"radius": 0.025400000000000002,
+							"xDir": 1,
+							"yDir": 0
+						}
+					},
+					"centerId": "clAhDfZz-Dgmb-d0AJ-01Cv-JINJdWZLbVj1.center",
+					"entityId": "clAhDfZz-Dgmb-d0AJ-01Cv-JINJdWZLbVj1"
+				}
+			}],
+			"constraints": [{
+				"type": 2,
+				"typeName": "BTMSketchConstraint",
+				"message": {
+					"constraintType": "COINCIDENT",
+					"parameters": [{
+						"type": 149,
+						"typeName": "BTMParameterString",
+						"message": {
+							"value": "clAhDfZz-Dgmb-d0AJ-01Cv-JINJdWZLbVj1.center",
+							"parameterId": "localFirst"
+						}
+					}, {
+						"type": 148,
+						"typeName": "BTMParameterQueryList",
+						"message": {
+							"queries": [{
+								"type": 138,
+								"typeName": "BTMIndividualQuery",
+								"message": {
+									"geometryIds": ["IB"]
+								}
+							}],
+							"parameterId": "externalSecond"
+						}
+					}],
+					"entityId": "clAhDfZz-Dgmb-d0AJ-01Cv-JINJdWZLbVj1.centerSnap0"
+				}
+			}, {
+				"type": 2,
+				"typeName": "BTMSketchConstraint",
+				"message": {
+					"constraintType": "DIAMETER",
+					"parameters": [{
+						"type": 149,
+						"typeName": "BTMParameterString",
+						"message": {
+							"value": "clAhDfZz-Dgmb-d0AJ-01Cv-JINJdWZLbVj1",
+							"parameterId": "localFirst"
+						}
+					}, {
+						"type": 147,
+						"typeName": "BTMParameterQuantity",
+						"message": {
+							"expression": "50 mm",
+							"parameterId": "length"
+						}
+					}, {
+						"type": 147,
+						"typeName": "BTMParameterQuantity",
+						"message": {
+							"expression": "0.637419526959446*rad",
+							"parameterId": "labelAngle"
+						}
+					}, {
+						"type": 147,
+						"typeName": "BTMParameterQuantity",
+						"message": {
+							"expression": "1.76201395706607",
+							"parameterId": "labelRatio"
+						}
+					}],
+					"entityId": "22b5a2c0-d3ea-4376-969d-8b81944035b2"
+				}
+			}],
+			"featureType": "newSketch",
+			"name": "Sketch 1",
+			"parameters": [{
+				"type": 148,
+				"typeName": "BTMParameterQueryList",
+				"message": {
+					"queries": [{
+						"type": 138,
+						"typeName": "BTMIndividualQuery",
+						"message": {
+							"geometryIds": ["JDC"]
+						}
+					}],
+					"parameterId": "sketchPlane"
+				}
+			}]
+		}
+	}
+}

@@ -1,0 +1,124 @@
+{
+	"feature": {
+		"type": 134,
+		"typeName": "BTMFeature",
+		"message": {
+			"featureType": "extrude",
+			"name": "Extrude 1",
+			"parameters": [{
+					"type": 145,
+					"typeName": "BTMParameterEnum",
+					"message": {
+						"enumName": "ToolBodyType",
+						"value": "SOLID",
+						"parameterId": "bodyType"
+					}
+				},
+				{
+					"type": 145,
+					"typeName": "BTMParameterEnum",
+					"message": {
+						"enumName": "NewBodyOperationType",
+						"value": "NEW",
+						"parameterId": "operationType"
+					}
+				},
+				{
+					"type": 148,
+					"typeName": "BTMParameterQueryList",
+					"message": {
+						"queries": [{
+							"type": 140,
+							"typeName": "BTMIndividualSketchRegionQuery",
+							"message": {
+								"featureId": "Fj1THqyY7u36ktGSr"
+							}
+						}],
+						"parameterId": "entities"
+					}
+				},
+				{
+					"type": 145,
+					"typeName": "BTMParameterEnum",
+					"message": {
+						"enumName": "BoundingType",
+						"value": "BLIND",
+						"parameterId": "endBound"
+					}
+				},
+				{
+					"type": 147,
+					"typeName": "BTMParameterQuantity",
+					"message": {
+						"expression": "25*mm",
+						"parameterId": "depth"
+					}
+				},
+				{
+					"type": 148,
+					"typeName": "BTMParameterQueryList",
+					"message": {
+						"parameterId": "surfaceEntities"
+					}
+				},
+				{
+					"type": 144,
+					"typeName": "BTMParameterBoolean",
+					"message": {
+						"parameterId": "oppositeDirection"
+					}
+				},
+				{
+					"type": 148,
+					"typeName": "BTMParameterQueryList",
+					"message": {
+						"parameterId": "endBoundEntityFace"
+					}
+				},
+				{
+					"type": 148,
+					"typeName": "BTMParameterQueryList",
+					"message": {
+						"parameterId": "endBoundEntityBody"
+					}
+				},
+				{
+					"type": 144,
+					"typeName": "BTMParameterBoolean",
+					"message": {
+						"parameterId": "hasDraft"
+					}
+				},
+				{
+					"type": 147,
+					"typeName": "BTMParameterQuantity",
+					"message": {
+						"expression": "3.0*deg",
+						"parameterId": "draftAngle"
+					}
+				},
+				{
+					"type": 144,
+					"typeName": "BTMParameterBoolean",
+					"message": {
+						"parameterId": "draftPullDirection"
+					}
+				},
+				{
+					"type": 144,
+					"typeName": "BTMParameterBoolean",
+					"message": {
+						"parameterId": "defaultScope"
+					}
+				},
+				{
+					"type": 148,
+					"typeName": "BTMParameterQueryList",
+					"message": {
+						"parameterId": "booleanScope"
+					}
+				}
+			]
+		}
+	}
+}

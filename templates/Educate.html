@@ -30,12 +30,17 @@
 
         <div id="submit"><input type="submit" value="Submit" class="hover button" onclick="showLoader()"></div>
         <div class="loader-container" id="loader"><div class="loader"></div></div>
-    </form>
+    </form><br>
 
     <form action="/educateCreate">
-        <br>
-        <div id="submit2"><input type="submit" value="Create Hemisphere" class="hover button" onclick="showLoader2()"></div>
+
+        <div id="submit2"><input type="submit" value="Create Hemisphere" class="hover button submit" onclick="showLoader2()"></div>
         <div class="loader-container" id="loader2"><div class="loader"></div></div>
+    </form><br>
+
+    <form action="/educateCreateCylinder">
+        <div id="submit3"><input type="submit" value="Create Cylinder" class="hover button submit" onclick="showLoader3()"></div>
+        <div class="loader-container" id="loader3"><div class="loader"></div></div>
     </form>
 
     <hr>
@@ -98,5 +103,18 @@ function showLoader2() {
     x.style.display = "none";
     y.style.display = "block";
   }
+}
+
+function showLoader3() {
+    let x = document.getElementById("submit3");
+    let y = document.getElementById("loader3");
+
+    if (x.style.display === "none") {
+        x.style.display = "block";
+        y.style.display = "none";
+    } else {
+        x.style.display = "none";
+        y.style.display = "block";
+    }
 }
 </script>

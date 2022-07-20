@@ -377,6 +377,23 @@ def jupyter():
 # ----------------------------#
 # ----CEEO Educate------------#
 # ----------------------------#
+@app.route('/educateCreateCylinder')
+def create_cylinder():
+    global EID, WID, DID
+
+    did = request.args.get('documentId')
+    wid = request.args.get('workspaceId')
+    eid = request.args.get('elementId')
+
+    if did or wid or eid:
+        DID = did
+        WID = wid
+        EID = eid
+
+    create_cylinder()
+    return educate()
+
+
 # Reset page for part assembly, CEEO Educate
 @app.route('/educateCreate')
 def educate_create():
@@ -674,8 +691,6 @@ def get_parts_in_document():
 
     response = get_request(fixed_url)
     parsed = json.loads(response.data)
-    # The command below prints the entire JSON response from Onshape
-    # print(json.dumps(parsed, indent=4, sort_keys=True))
     return parsed
 
 
@@ -937,3 +952,31 @@ def stepping_rotation(frames=60, rotation=360.0, zoom_start=0.001, zoom_end=0.00
     else:
         im1.save('static/images/'+name+'.gif', save_all=True, append_images=images, disposal=2, duration=duration)
     return 'static/images/'+name+'.gif'   # Return GIF
+
+
+# -----------------------------------------------------#
+# ------------ Assembly Gif Functions -----------------#
+# -----------------------------------------------------#
+def create_cylinder():
+    global DID, WID, EID
+    with open('jsonCommands/CreateCircle.json', 'r') as openfile:
+        json_object = json.load(openfile)  # Reading from json file
+
+    fixed_url = '/api/partstudios/d/' + DID + '/w/' + WID + '/e/' + EID + '/features'
+
+    method = 'POST'
+    params = {}
+    payload = json_object
+    headers = {'Accept': 'application/vnd.onshape.v1+json; charset=UTF-8;qs=0.1',
+               'Content-Type': 'application/json'}
+
+    response = client.api_client.request(method, url=base + fixed_url, query_params=params, headers=headers,
+                                         body=payload)
+    response = json.loads(response.data)
+
+    fid = response["feature"]["message"]["featureId"]
+    with open('jsonCommands/ExtrudeSketch.json', 'r') as openfile:
+        json_object = json.load(openfile)  # Reading from json file
+    json_object["feature"]["message"]["parameters"][2]["message"]["queries"][0]["message"]["featureId"] = fid
+    payload = json_object
+    client.api_client.request(method, url=base + fixed_url, query_params=params, headers=headers, body=payload)
