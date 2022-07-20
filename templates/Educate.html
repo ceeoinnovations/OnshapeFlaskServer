@@ -9,11 +9,35 @@
     <header><h1> Tufts CEEO App </h1></header>
     <hr>
 
-    <form action="/gif">
-        <h3 style="text-align:left; color:#000000;"> CEEO Educate </h3>
+    <button onclick="hidePartsList()" class="hover">Features</button>
+    <div id="partsList">
         <p>{{FEATURES}}</p>
-        <p>{{FEATURES2}}</p>
+<!--        <p>{{FEATURES2}}</p>-->
+    </div>
+    <hr>
+
+    <form action="/educateSet">
+        <h3 style="text-align:left; color:#000000;"> CEEO Educate </h3>
+
+        <label for="value1">{{NAME1}}:</label>
+        <input type="text" id="value1" name="value1" value="{{VALUE1}}"><br><br>
+
+        <label for="value2">{{NAME2}}:</label>
+        <input type="text" id="value2" name="value2" value="{{VALUE2}}"><br><br>
+
+        <label for="value3">{{NAME3}}:</label>
+        <input type="text" id="value3" name="value3" value="{{VALUE3}}"><br><br>
+
+        <div id="submit"><input type="submit" value="Submit" class="hover button" onclick="showLoader()"></div>
+        <div class="loader-container" id="loader"><div class="loader"></div></div>
     </form>
+
+    <form action="/educateCreate">
+        <br>
+        <div id="submit2"><input type="submit" value="Create Hemisphere" class="hover button" onclick="showLoader2()"></div>
+        <div class="loader-container" id="loader2"><div class="loader"></div></div>
+    </form>
+
     <hr>
 
     <button onclick="hideidList()" class="hover">Document ID's</button>
@@ -32,12 +56,47 @@
 </body>
 
 <script>
+function hidePartsList() {
+  const x = document.getElementById("partsList");
+  if (x.style.display === "block") {
+    x.style.display = "none";
+  } else {
+    x.style.display = "block";
+  }
+}
+
 function hideidList() {
   var x = document.getElementById("idList");
   if (x.style.display === "block") {
     x.style.display = "none";
   } else {
     x.style.display = "block";
+  }
+}
+
+function showLoader() {
+  let x = document.getElementById("submit");
+  let y = document.getElementById("loader");
+
+  if (x.style.display === "none") {
+    x.style.display = "block";
+    y.style.display = "none";
+  } else {
+    x.style.display = "none";
+    y.style.display = "block";
+  }
+}
+
+function showLoader2() {
+  let x = document.getElementById("submit2");
+  let y = document.getElementById("loader2");
+
+  if (x.style.display === "none") {
+    x.style.display = "block";
+    y.style.display = "none";
+  } else {
+    x.style.display = "none";
+    y.style.display = "block";
   }
 }
 </script>

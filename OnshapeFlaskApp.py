@@ -8,12 +8,10 @@ import base64
 
 # Imports for Onshape API Calls
 from onshape_client.client import Client
-from onshape_client.onshape_url import OnshapeElement
 
 # Imports for the CEEO Rotate and Graph Extension
 import io
-import matplotlib.pyplot as plt 
-from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 
 # Imports for the CEEO GIF Maker Extension
@@ -28,6 +26,7 @@ app = Flask(__name__)
 
 app_key = ''
 secret_key = ''
+client = ''
 DID = ''
 WID = '' 
 EID = ''
@@ -42,12 +41,17 @@ base = 'https://rogers.onshape.com'  # Change if using an Enterprise account
 # base = 'https://cad.onshape.com'  # This is the default Enterprise
 
 # Search and check if a file named "OnshapeAPIKey.py" exists in the folder. Then uses the API Keys found in the file
-for _, _, files in os.walk('.'): 
+for files in os.listdir('.'):
     if "OnshapeAPIKey.py" in files: 
         exec(open('OnshapeAPIKey.py').read())
         app_key = access
         secret_key = secret
-        break 
+        client = Client(configuration={"base_url": base, "access_key": app_key, "secret_key": secret_key})
+        print("Client Created!")
+        break
+
+if client == '':
+    raise Exception("Couldn't find \"OnshapeAPIKey.py\" in file \"OnshapeFlaskServer\" and unable to create client.")
 
 
 # -------------------------------------------------------------------------------------------#
@@ -88,13 +92,9 @@ def login():
         WID = wid
         EID = eid
 
-    # Generate Onshape URL and client for API calls
-    client = Client(configuration={"base_url": base, "access_key": app_key, "secret_key": secret_key})
-    url = '{}/documents/{}/w/{}/e/{}'.format(base, str(DID), str(WID), str(EID))
-
     # Returns html webpage and make api calls using template 'RotateAndGraph.html'
     return render_template('RotateAndGraph.html', DID=DID, WID=WID, EID=EID, STEP=STEP, condition1=False,
-                           return1=list_parts_assembly(client, url).split('\n'), return2=list(partsDictionary.keys()),
+                           return1=list_parts_assembly().split('\n'), return2=list(partsDictionary.keys()),
                            return2_len=len(partsDictionary.keys()), selected1=selected1, selected2=selected2,
                            selected3=selected3, DIRECTION=direction)
 
@@ -124,8 +124,6 @@ def graph():
     direction = direction + 2 * bool(request.args.get('rotateY'))
     direction = direction + 1 * bool(request.args.get('rotateZ'))
 
-    client = Client(configuration={"base_url": base, "access_key": app_key, "secret_key": secret_key})
-
     # ------ START OF ROTATION CODE ------ #
     # Define variables
     input_x_pos = []
@@ -152,14 +150,11 @@ def graph():
         total = 0
     rotation_step = total / STEP  # in radian
 
-    url = '{}/documents/{}/w/{}/e/{}'.format(str(base), str(DID), str(WID), str(EID))
-
     # Check for initial positions and assembly info
-    assembly_info = get_assembly_definition(client, url)
+    assembly_info = get_assembly_definition()
     in_pos = get_position(assembly_info, in_id)
     out_pos = get_position(assembly_info, out_id)
     if in_pos and out_pos:
-        start = in_pos[0]
         # Add initial positions to position array
         input_x_pos.append(in_pos[0])
         input_y_pos.append(in_pos[1])
@@ -170,9 +165,9 @@ def graph():
         output_z_pos.append(out_pos[2])
         for i in range(STEP):
             # Rotate the input by rotation_step
-            rotate_input(client, assembly_info, url, move_id, rotation_step, direction)
+            rotate_input(assembly_info, move_id, rotation_step, direction)
             # Get the x-y position of the input and output position trackers
-            assembly_info = get_assembly_definition(client, url)
+            assembly_info = get_assembly_definition()
             in_pos = get_position(assembly_info, in_id)
             out_pos = get_position(assembly_info, out_id)
             input_x_pos.append(in_pos[0])
@@ -206,7 +201,7 @@ def graph():
     output = io.BytesIO()
     FigureCanvasAgg(fig).print_png(output)
     return render_template('RotateAndGraph.html', image1=base64.b64encode(output.getvalue()).decode("utf-8"),
-                           DID=DID, WID=WID, EID=EID, STEP=STEP, return1=list_parts_assembly(client, url).split('\n'),
+                           DID=DID, WID=WID, EID=EID, STEP=STEP, return1=list_parts_assembly().split('\n'),
                            return2=list(partsDictionary.keys()), return2_len=len(partsDictionary.keys()),
                            selected1=selected1, selected2=selected2, selected3=selected3, condition1=True,
                            DIRECTION=direction)
@@ -237,11 +232,9 @@ def login2():
         EID = eid
 
     # Send output image to user using template 'ImageMaker.html'
-    client = Client(configuration={"base_url": base, "access_key": app_key, "secret_key": secret_key})
-    url = '{}/documents/{}/w/{}/e/{}'.format(base, str(DID), str(WID), str(EID))
     return render_template('ImageMaker.html', DID=DID, WID=WID, EID=EID, condition1=view,
-                           img_data=part_studio_shaded_view(client, url, view), condition2=view.replace(" ", ""),
-                           return1=list_parts_part_studio(client, url).split('\n'))
+                           img_data=part_studio_shaded_view(view), condition2=view.replace(" ", ""),
+                           return1=list_parts_part_studio().split('\n'))
 
 
 # -----------------------#
@@ -284,11 +277,9 @@ def login3():
 
     # Send output to user using template 'GifMaker.html'. Output does not include GIF,
     # but does include default input values and list of parts through list_parts_assembly()
-    client = Client(configuration={"base_url": base, "access_key": app_key, "secret_key": secret_key})
-    url = '{}/documents/{}/w/{}/e/{}'.format(base, str(DID), str(WID), str(EID))
-    views = get_views(client, url)
+    views = get_views()
     return render_template('GifMaker.html', DID=DID, WID=WID, EID=EID, condition1=False, EDGES=edges, HEIGHT=height,
-                           return1=list_parts_assembly(client, url).split('\n'), FRAMES=frames, ROTATION=rotation,
+                           return1=list_parts_assembly().split('\n'), FRAMES=frames, ROTATION=rotation,
                            ZSTART=int(zoom_start), ZEND=int(zoom_end), ZAUTO=z_auto, return2=list(views.keys()),
                            return2_len=len(views.keys()), selected1=start_view, LOOP=loop, ZOOM3=zoom3, NAME=name,
                            ZMID=int(zoom_mid), DIRECTION=int(direction), DURATION=duration, ZOOM2=zoom2, WIDTH=width)
@@ -348,18 +339,14 @@ def gif():
     width = int(request.args.get('width'))
     # ------ End of user inputs ------ #
 
-    # Generating Onshape API information
-    client = Client(configuration={"base_url": base, "access_key": app_key, "secret_key": secret_key})
-    url = '{}/documents/{}/w/{}/e/{}'.format(str(base), str(DID), str(WID), str(EID))
-
     # Send output to user using template 'GifMaker.html'. Output includes created GIF, and won't send until its done.
     # Also makes sure to set all variables to what they submitted, includes converting back for zooms
-    views = get_views(client, url)
+    views = get_views()
     return render_template('GifMaker.html', condition1=True, DID=DID, WID=WID, EID=EID, FRAMES=frames,
-                           image1=stepping_rotation(client, url, frames, rotation, zoom_start, zoom_end, start_view,
+                           image1=stepping_rotation(frames, rotation, zoom_start, zoom_end, start_view,
                                                     loop, zoom3, zoom_mid, direction, name, duration, edges,
                                                     height, width),
-                           return1=list_parts_assembly(client, url).split('\n'), ZSTART=int((.1001-zoom_start)*10000),
+                           return1=list_parts_assembly().split('\n'), ZSTART=int((.1001-zoom_start)*10000),
                            ZEND=int((.1001-zoom_end)*10000), return2=list(views.keys()), return2_len=len(views.keys()),
                            selected1=start_view, ZAUTO=z_auto, LOOP=loop, ZOOM3=zoom3, NAME=name, DURATION=duration,
                            ZMID=int((.1001-zoom_mid)*10000), DIRECTION=int(direction), ZOOM2=zoom2, EDGES=edges,
@@ -383,10 +370,6 @@ def jupyter():
         WID = wid
         EID = eid
 
-    # Generate Onshape URL and client for API calls
-    # client = Client(configuration={"base_url": base, "access_key": app_key, "secret_key": secret_key})
-    # url = '{}/documents/{}/w/{}/e/{}'.format(base, str(DID), str(WID), str(EID))
-
     # Returns html webpage and make api calls using template 'Jupyter.html'
     return render_template('Jupyter.html', DID=DID, WID=WID, EID=EID, STEP=STEP)
 
@@ -394,6 +377,128 @@ def jupyter():
 # ----------------------------#
 # ----CEEO Educate------------#
 # ----------------------------#
+# Reset page for part assembly, CEEO Educate
+@app.route('/educateCreate')
+def educate_create():
+    global EID, WID, DID, client
+
+    did = request.args.get('documentId')
+    wid = request.args.get('workspaceId')
+    eid = request.args.get('elementId')
+
+    if did or wid or eid:
+        DID = did
+        WID = wid
+        EID = eid
+
+    fixed_url = '/api/partstudios/d/' + DID + '/w/' + WID + '/e/' + EID + '/features'
+    get_response = get_request(fixed_url)
+
+    # CREATE NEW SKETCH
+    new_feature = json.loads(get_response.data)["features"][0]
+    new_feature["message"]["constraints"][1]["message"]["parameters"][1]["message"]["expression"] = '12 in'
+    new_feature["message"]["name"] = "Circle 2"
+    new_feature["message"]["featureId"] = ""
+
+    method = 'POST'
+    params = {}
+    payload = {'feature': new_feature,
+               'serializationVersion': json.loads(get_response.data)["serializationVersion"],
+               'sourceMicroversion': json.loads(get_response.data)["sourceMicroversion"]}
+    headers = {'Accept': 'application/vnd.onshape.v1+json; charset=UTF-8;qs=0.1',
+               'Content-Type': 'application/json'}
+
+    client.api_client.request(method, url=base + fixed_url, query_params=params, headers=headers, body=payload)
+
+    # CREATE NEW SKETCH
+    new_feature = json.loads(get_response.data)["features"][2]
+    new_feature["message"]["parameters"][3]["message"]["queries"][0]["message"]["geometryIds"].clear()
+    new_feature["message"]["parameters"][8]["message"]["expression"] = '180 deg'
+    new_feature["message"]["name"] = "Revolve 2"
+    new_feature["message"]["featureId"] = ""
+
+    method = 'POST'
+    params = {}
+    payload = {'feature': new_feature,
+               'serializationVersion': json.loads(get_response.data)["serializationVersion"],
+               'sourceMicroversion': json.loads(get_response.data)["sourceMicroversion"]}
+    headers = {'Accept': 'application/vnd.onshape.v1+json; charset=UTF-8;qs=0.1',
+               'Content-Type': 'application/json'}
+
+    client.api_client.request(method, url=base + fixed_url, query_params=params, headers=headers, body=payload)
+
+    get_response = get_request(fixed_url)
+    fixed_url = fixed_url + '/featureid/fid'
+    fid = json.loads(get_response.data)["features"][5]["message"]["featureId"]
+    fixed_url = fixed_url.replace('fid', fid)
+
+    new_feature = json.loads(get_response.data)["features"][5]
+    new_feature["message"]["parameters"][3]["message"]["queries"][0]["message"]["geometryIds"].append('JNC')
+
+    method = 'POST'
+    params = {}
+    payload = {'feature': new_feature,
+               'serializationVersion': json.loads(get_response.data)["serializationVersion"],
+               'sourceMicroversion': json.loads(get_response.data)["sourceMicroversion"]}
+    headers = {'Accept': 'application/vnd.onshape.v1+json; charset=UTF-8;qs=0.1',
+               'Content-Type': 'application/json'}
+
+    client.api_client.request(method, url=base + fixed_url, query_params=params, headers=headers, body=payload)
+    # Returns html webpage and make api calls using template 'Jupyter.html'
+    return educate()
+
+
+# Reset page for part assembly, CEEO Educate
+@app.route('/educateSet')
+def educate_set():
+    global EID, WID, DID, client
+
+    did = request.args.get('documentId')
+    wid = request.args.get('workspaceId')
+    eid = request.args.get('elementId')
+
+    if did or wid or eid:
+        DID = did
+        WID = wid
+        EID = eid
+
+    fixed_url = '/api/partstudios/d/' + DID + '/w/' + WID + '/e/' + EID + '/features'
+    get_response = get_request(fixed_url)
+
+    fixed_url = fixed_url + '/featureid/fid'
+    fixed_url2 = fixed_url
+    fid = json.loads(get_response.data)["features"][0]["message"]["featureId"]
+    fid2 = json.loads(get_response.data)["features"][1]["message"]["featureId"]
+    fixed_url = fixed_url.replace('fid', fid)
+    fixed_url2 = fixed_url2.replace('fid', fid2)
+
+    new_feature = json.loads(get_response.data)["features"][0]
+    new_feature2 = json.loads(get_response.data)["features"][1]
+    new_feature["message"]["constraints"][1]["message"]["parameters"][1]["message"]["expression"] = \
+        request.args.get("value1")
+    new_feature2["message"]["constraints"][11]["message"]["parameters"][3]["message"]["expression"] = \
+        request.args.get("value2")
+    new_feature2["message"]["constraints"][12]["message"]["parameters"][3]["message"]["expression"] = \
+        request.args.get("value3")
+
+    method = 'POST'
+    params = {}
+    payload = {'feature': new_feature,
+               'serializationVersion': json.loads(get_response.data)["serializationVersion"],
+               'sourceMicroversion': json.loads(get_response.data)["sourceMicroversion"]}
+    payload2 = {'feature': new_feature2,
+                'serializationVersion': json.loads(get_response.data)["serializationVersion"],
+                'sourceMicroversion': json.loads(get_response.data)["sourceMicroversion"]}
+    headers = {'Accept': 'application/vnd.onshape.v1+json; charset=UTF-8;qs=0.1',
+               'Content-Type': 'application/json'}
+
+    client.api_client.request(method, url=base + fixed_url, query_params=params, headers=headers, body=payload)
+    client.api_client.request(method, url=base + fixed_url2, query_params=params, headers=headers, body=payload2)
+
+    # Returns html webpage and make api calls using template 'Jupyter.html'
+    return educate()
+
+
 # Home page for part assembly, CEEO Educate
 @app.route('/educate')
 def educate():
@@ -409,88 +514,53 @@ def educate():
         EID = eid
 
     # Generate Onshape URL and client for API calls
-    client = Client(configuration={"base_url": base, "access_key": app_key, "secret_key": secret_key})
-    # url = '{}/documents/{}/w/{}/e/{}'.format(base, str(DID), str(WID), str(EID))
-
     fixed_url = '/api/partstudios/d/' + DID + '/w/' + WID + '/e/' + EID + '/features'
-    # fixed_url = '/api/partstudios/d/' + DID + '/w/' + WID + '/e/' + EID + '/sketches'
-    # FW1s5mEqnjF2jHl_0   7K1fPFkx5x8J   Rh3FOTqGs6yq
 
-    # GET OLD SKETCH
-    method = 'GET'
-    params = {}
-    payload = {}
-    headers = {'Accept': 'application/vnd.onshape.v1+json; charset=UTF-8;qs=0.1',
-               'Content-Type': 'application/json'}
+    get_response = get_request(fixed_url)
+    parsed = get_response.data
+    # parsed = json.loads(get_response.data)
 
-    get_response = client.api_client.request(method, url=base + fixed_url, query_params=params, headers=headers,
-                                         body=payload)
-    # fixed_url = '/api/partstudios/d/' + DID + '/w/' + WID + '/e/' + EID + '/features'
-    # get_response2 = client.api_client.request(method, url=base + fixed_url, query_params=params, headers=headers,
-    #                                          body=payload)
-    # print(json.loads(response.data)["features"][0]["message"]["entities"][0]["message"]["geometry"]["message"])
+    val1 = val2 = val3 = name1 = name2 = name3 = ""
+    # new_feature = json.loads(get_response.data)["features"]
+    # val1 = new_feature[0]["message"]["constraints"][1]["message"]["parameters"][1]["message"]["expression"]
+    # name1 = new_feature[0]["message"]["name"]
+    # val2 = new_feature[1]["message"]["constraints"][11]["message"]["parameters"][3]["message"]["expression"]
+    # name2 = new_feature[1]["message"]["name"]
+    # val3 = new_feature[1]["message"]["constraints"][12]["message"]["parameters"][3]["message"]["expression"]
+    # name3 = new_feature[1]["message"]["name"]
 
-    # # REPLACE SKETCH
-    # fixed_url = fixed_url + '/featureid/fid'
-    # fid = json.loads(response.data)["features"][0]["message"]["featureId"]
-    # fixed_url = fixed_url.replace('fid', fid)
-    # # END REPLACE SKETCH
-
-    # # CREATE NEW SKETCH
-    # newFeature = json.loads(get_response.data)["features"][0]
-    # # newFeature["message"]["entities"][0]["message"]["geometry"]["message"]["radius"] = 0.01
-    # newFeature["message"]["constraints"][1]["message"]["parameters"][1]["message"]["expression"] = '50 mm'
-    # # newFeature["message"]["entities"] = []
-    # # newFeature["message"]["constraints"] = []
-    # newFeature["message"]["name"] = "Sketch 2"
-    # # newFeature["message"]["featureId"] = ""
-    #
-    # # print(newFeature)
-    #
-    # method = 'POST'
-    # params = {}
-    # payload = {'feature': newFeature,
-    #            'serializationVersion': json.loads(get_response.data)["serializationVersion"],
-    #            'sourceMicroversion': json.loads(get_response.data)["sourceMicroversion"]}
-    # headers = {'Accept': 'application/vnd.onshape.v1+json; charset=UTF-8;qs=0.1',
-    #            'Content-Type': 'application/json'}
-    #
-    # response = client.api_client.request(method, url=base + fixed_url, query_params=params, headers=headers,
-    #                                      body=payload)
-    # # END OF NEW SKETCH
-
-    # # CREATE NEW SKETCH
-    # newFeature = json.loads(get_response.data)["features"][1]
-    # newFeature["message"]["parameters"][3]["message"]["queries"][0]["message"]["geometryIds"][0] = 'JDC'
-    # newFeature["message"]["name"] = "Revolve 2"
-    # newFeature["message"]["featureId"] = ""
-    # # print(newFeature)
-    #
-    # method = 'POST'
-    # params = {}
-    # payload = {'feature': newFeature,
-    #            'serializationVersion': json.loads(get_response.data)["serializationVersion"],
-    #            'sourceMicroversion': json.loads(get_response.data)["sourceMicroversion"]}
-    # headers = {'Accept': 'application/vnd.onshape.v1+json; charset=UTF-8;qs=0.1',
-    #            'Content-Type': 'application/json'}
-    #
-    # response = client.api_client.request(method, url=base + fixed_url, query_params=params, headers=headers,
-    #                                      body=payload)
-    # # END OF NEW SKETCH
-
-    parsed = json.loads(get_response.data)
-    # parsed2 = json.loads(get_response2.data)
-    # print(parsed)
-    # Returns html webpage and make api calls using template 'Educate.html'
-    return render_template('Educate.html', DID=DID, WID=WID, EID=EID, STEP=STEP, FEATURES=parsed)
+    # Returns html webpage and make api calls using template 'Educate.html']
+    return render_template('Educate.html', DID=DID, WID=WID, EID=EID, STEP=STEP, FEATURES=parsed,
+                           NAME1=name1, VALUE1=val1, NAME2=name2, VALUE2=val2, NAME3=name3, VALUE3=val3)
 
 
 # -------------------------------------------------------------------------------------------#
 # ------------------ Helper Functions -------------------------------------------------------#
 # -------------------------------------------------------------------------------------------#
+def get_request(fixed_url, params=None, payload=None, charset=' charset=UTF-8;qs=0.1'):
+    global client
+    method = 'GET'
+    if params is None:
+        params = {}
+        # params = {'includeGeometryIds': False}
+    if payload is None:
+        payload = {}
+    headers = {'Accept': 'application/vnd.onshape.v1+json;' + charset, 'Content-Type': 'application/json'}
+    return client.api_client.request(method, url=base + fixed_url, query_params=params, headers=headers, body=payload)
+
+
+def fix_url(url):
+    global DID, WID, EID
+    url = url.replace('did', DID)
+    url = url.replace('wid', WID)
+    url = url.replace('eid', EID)
+    return url
+
+
 # This function rotates the input link of the mechanism with a fixed rotation step in degree; changes are
 # made to the actual model, credit to: Felix Deng @ https://github.com/PTC-Education/Four-Bar-Mechanism
-def rotate_input(client, assembly, url: str, part_id: str, rotation: float, direction: int):
+def rotate_input(assembly, part_id: str, rotation: float, direction: int):
+    global client
 
     identity_matrix = np.reshape([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1], (4, 4))
     occurrences = assembly['rootAssembly']['occurrences']
@@ -506,10 +576,7 @@ def rotate_input(client, assembly, url: str, part_id: str, rotation: float, dire
     transform_mat = np.matmul(identity_matrix, rot_mat)
 
     fixed_url = '/api/assemblies/d/did/w/wid/e/eid/occurrencetransforms'
-    element = OnshapeElement(url)
-    fixed_url = fixed_url.replace('did', element.did)
-    fixed_url = fixed_url.replace('wid', element.wvmid)
-    fixed_url = fixed_url.replace('eid', element.eid)
+    fixed_url = fix_url(fixed_url)
 
     method = 'POST'
     params = {}
@@ -522,20 +589,11 @@ def rotate_input(client, assembly, url: str, part_id: str, rotation: float, dire
 
 
 # This function gets the definition of the assembly, including information of all part instances and mate features
-def get_assembly_definition(client, url: str):
+def get_assembly_definition():
     fixed_url = '/api/assemblies/d/did/w/wid/e/eid'
-    element = OnshapeElement(url)
-    fixed_url = fixed_url.replace('did', element.did)
-    fixed_url = fixed_url.replace('wid', element.wvmid)
-    fixed_url = fixed_url.replace('eid', element.eid)
+    fixed_url = fix_url(fixed_url)
 
-    method = 'GET'
-    params = {}
-    payload = {}
-    headers = {'Accept': 'application/vnd.onshape.v1+json; charset=UTF-8;qs=0.1', 'Content-Type': 'application/json'}
-
-    response = client.api_client.request(method, url=base + fixed_url, query_params=params, headers=headers,
-                                         body=payload)
+    response = get_request(fixed_url)
     parsed = json.loads(response.data)
     return parsed
 
@@ -553,10 +611,10 @@ def get_position(assembly, part_id: str):
 # This functions requests the assembly definition
 # Creates a dictionary of all parts by "name" = "ID" to global partsDictionary
 # Returns the parts as output html that can be listed for the user.
-def list_parts_assembly(client, url):
+def list_parts_assembly():
     global partsDictionary
     output_html = ""
-    part_response = get_assembly_definition(client, url)
+    part_response = get_assembly_definition()
 
     partsDictionary.clear()
     for instance in part_response['rootAssembly']['instances']:
@@ -568,9 +626,9 @@ def list_parts_assembly(client, url):
 
 # This functions requests the part studio json list of parts through get_parts_in_document() and then converts it into
 # output html that can be listed for the user.
-def list_parts_part_studio(client, url):
+def list_parts_part_studio():
     output_html = ""
-    part_response = get_parts_in_document(client, url)
+    part_response = get_parts_in_document()
 
     for i in range(len(part_response)):
         output_html = output_html + "" + (part_response[i]["name"] + "\nPart ID: " + part_response[i]["partId"] +
@@ -581,15 +639,10 @@ def list_parts_part_studio(client, url):
 
 # Get Shaded View of PartStudio, returns the base64 image string of a shaded view of a part studio
 # viewMatrix can be any face direction or isometric as a string, or a 1x12 view matrix, type:"string"
-def part_studio_shaded_view(client, url: str, view_matrix="front"):
+def part_studio_shaded_view(view_matrix="front"):
     # fixed url used for API request
     fixed_url = '/api/partstudios/d/did/w/wid/e/eid/shadedviews'
-    element = OnshapeElement(url)
-    fixed_url = fixed_url.replace('did', element.did)
-    fixed_url = fixed_url.replace('wid', element.wvmid)
-    fixed_url = fixed_url.replace('eid', element.eid)
-
-    method = 'GET'
+    fixed_url = fix_url(fixed_url)
 
     # Basic Isometric Matrix
     matrix = "0.612,0.612,0,0,-0.354,0.354,0.707,0,0.707,-0.707,0.707,0"
@@ -605,13 +658,7 @@ def part_studio_shaded_view(client, url: str, view_matrix="front"):
               'outputHeight': 600,
               'outputWidth': 1000,
               'pixelSize': 0}   # Pixel Size = 0, so it automatically zooms
-
-    payload = {}
-    headers = {'Accept': 'application/vnd.onshape.v1+json',
-               'Content-Type': 'application/json'}
-
-    response = client.api_client.request(method, url=base + fixed_url, query_params=params, headers=headers,
-                                         body=payload)
+    response = get_request(fixed_url, params=params, charset='')
 
     # Load the image from the Onshape API request, encode and decode it (using base64) to send to user
     parsed = json.loads(response.data)
@@ -621,23 +668,11 @@ def part_studio_shaded_view(client, url: str, view_matrix="front"):
 
 
 # Get Parts in Document, returns JSON of all parts in a part studio
-def get_parts_in_document(client, url: str):
+def get_parts_in_document():
     fixed_url = '/api/parts/d/did/w/wid/e/eid/'
+    fixed_url = fix_url(fixed_url)
 
-    element = OnshapeElement(url)
-    fixed_url = fixed_url.replace('did', element.did)
-    fixed_url = fixed_url.replace('wid', element.wvmid)
-    fixed_url = fixed_url.replace('eid', element.eid)
-
-    method = 'GET'
-
-    params = {}
-    payload = {}
-    headers = {'Accept': 'application/vnd.onshape.v1+json; charset=UTF-8;qs=0.1', 'Content-Type': 'application/json'}
-
-    response = client.api_client.request(method, url=base + fixed_url, query_params=params, headers=headers,
-                                         body=payload)
-
+    response = get_request(fixed_url)
     parsed = json.loads(response.data)
     # The command below prints the entire JSON response from Onshape
     # print(json.dumps(parsed, indent=4, sort_keys=True))
@@ -650,16 +685,12 @@ def get_parts_in_document(client, url: str):
 # This function returns a shaded view of the provided assembly with the provided settings. These settings are extremely
 # customizable. It allows you to change the view angle, pixels size (zoom), if edges are "show" or "hide", the filename
 # of the saved image, the image height and width in pixels.
-def assemblies_shaded_view(client, url: str, view_matrix="Isometric", pixel_size=0.000, edges="show",
-                           filename="image.jpg", output_height=600, output_width=1000):
+def assemblies_shaded_view(view_matrix="Isometric", pixel_size=0.000, edges="show",
+                           filename="static/images/image.jpg", output_height=600, output_width=1000):
     # Fixed URL for Onshape assemblies, shaded view API.
     fixed_url = '/api/assemblies/d/did/w/wid/e/eid/shadedviews'
-    element = OnshapeElement(url)
-    fixed_url = fixed_url.replace('did', element.did)
-    fixed_url = fixed_url.replace('wid', element.wvmid)
-    fixed_url = fixed_url.replace('eid', element.eid)
+    fixed_url = fix_url(fixed_url)
 
-    method = 'GET'
     matrix = "0.612,0.612,0,0,-0.354,0.354,0.707,0,0.707,-0.707,0.707,0"   # default Isometric View
     if any(face in view_matrix for face in ["front", "back", "top", "bottom", "left", "right"]):
         matrix = view_matrix   # Onshape client will accept one of these six strings as just a word instead of an array
@@ -672,13 +703,7 @@ def assemblies_shaded_view(client, url: str, view_matrix="Isometric", pixel_size
               'outputHeight': output_height,
               'outputWidth': output_width,
               'pixelSize': pixel_size}
-
-    payload = {}
-    headers = {'Accept': 'application/vnd.onshape.v1+json',
-               'Content-Type': 'application/json'}
-
-    response = client.api_client.request(method, url=base + fixed_url, query_params=params, headers=headers,
-                                         body=payload)
+    response = get_request(fixed_url, params=params, charset='')
 
     # Load image based on response data and encode plus decode it using base64
     parsed = json.loads(response.data)
@@ -773,35 +798,23 @@ def clockwise_spinz(theta):
 
 
 # Get named views from Assembly
-# assemblies_named_views(client, url: str) returns JSON of all named views in an assembly
-def assemblies_named_views(client, url: str):
+# assemblies_named_views(url: str) returns JSON of all named views in an assembly
+def assemblies_named_views():
     # Fixed URL for Onshape assemblies, named views API.
     fixed_url = '/api/assemblies/d/did/e/eid/namedViews'
-    element = OnshapeElement(url)
-    fixed_url = fixed_url.replace('did', element.did)
-    fixed_url = fixed_url.replace('eid', element.eid)
+    fixed_url = fix_url(fixed_url)
 
-    method = 'GET'
-
-    params = {}
-    payload = {}
-    headers = {'Accept': 'application/vnd.onshape.v1+json',
-               'Content-Type': 'application/json'}
-
-    # make Onshape API call
-    response = client.api_client.request(method, url=base + fixed_url, query_params=params, headers=headers,
-                                         body=payload)
-
+    response = get_request(fixed_url)
     # load json response and return it
     parsed = json.loads(response.data)
     return parsed
 
 
-# get_views(client, url: str) returns list of all named and regular views
+# get_views(url: str) returns list of all named and regular views
 # The regular views are hard coded in. The data was gotten through the use of named views in the exact same positions
-def get_views(client, url: str):
+def get_views():
     global viewsDictionary
-    view_matrices = assemblies_named_views(client, url)['namedViews']
+    view_matrices = assemblies_named_views()['namedViews']
 
     # clears the global dictionary (viewsDictionary) and then refills its values
     # Named views first, then hard coded default views
@@ -849,8 +862,8 @@ def get_views(client, url: str):
 # Floats: rotation, zoom_start, zoom_end, zoom_mid
 # Strings: start_view must be a  name from viewsDictionary, name
 # Booleans: loop, edges, zoom3
-# Special: "client" must be an Onshape client and "url" the url of an Onshape Assembly
-def stepping_rotation(client, url: str, frames=60, rotation=360.0, zoom_start=0.001, zoom_end=0.001,
+# Special: "url" must be the url of an Onshape Assembly
+def stepping_rotation(frames=60, rotation=360.0, zoom_start=0.001, zoom_end=0.001,
                       start_view="Isometric", loop=True, zoom3=False, zoom_mid=0.002, direction=4,
                       name="OnshapeGIF", duration=0, edges=False, height=600, width=1000):
     global viewsDictionary
@@ -896,25 +909,26 @@ def stepping_rotation(client, url: str, frames=60, rotation=360.0, zoom_start=0.
         zoom_array = np.linspace(zoom_start, zoom_end, frames)
 
     # First frame is generated. Slight different then creating frames inside the for loop
-    matrix = multiply(matrix, clockwise_spin(total_z_rotation_angle / frames, direction))   # Spin matrix
-    flattened = matrix[0][0:4].tolist() + matrix[1][0:4].tolist() + matrix[2][0:4].tolist()   # Flatten matrix
-    assemblies_shaded_view(client, url, flattened, zoom_array[0], edges, "image.jpg", height, width)   # Get frame
-    im1 = gen_frame("image.jpg")    # This is the only difference, save first frame as base image
+    matrix = multiply(matrix, clockwise_spin(total_z_rotation_angle / frames, direction))  # Spin matrix
+    flattened = matrix[0][0:4].tolist() + matrix[1][0:4].tolist() + matrix[2][0:4].tolist()  # Flatten matrix, Get frame
+    assemblies_shaded_view(flattened, zoom_array[0], edges, "static/images/image.jpg", height, width)
+    im1 = gen_frame("static/images/image.jpg")    # This is the only difference, save first frame as base image
     print(str(int(1 / frames * 1000) / 10) + "%", end="\r")   # print progress in format "100.0%"
 
     # For loop to iterate through the rest of the frames.
     for i in range(1, frames):
-        matrix = multiply(matrix, clockwise_spin(total_z_rotation_angle / frames, direction))   # Spin matrix
-        flattened = matrix[0][0:4].tolist() + matrix[1][0:4].tolist() + matrix[2][0:4].tolist()   # Flatten matrix
-        assemblies_shaded_view(client, url, flattened, zoom_array[i], edges, "image.jpg", height, width)   # Get frame
-        images.append(gen_frame("image.jpg"))   # Save frame to images list
+        matrix = multiply(matrix, clockwise_spin(total_z_rotation_angle / frames, direction))  # Spin matrix
+        flattened = matrix[0][0:4].tolist() + matrix[1][0:4].tolist() + matrix[2][0:4].tolist()  # Flatten matrix
+        assemblies_shaded_view(flattened, zoom_array[i], edges, "static/images/image.jpg", height, width)
+        images.append(gen_frame("static/images/image.jpg"))   # Save frame to images list
         print(str(int((i + 1)/frames * 1000)/10) + "%", end="\r")   # print progress in format "100.0%"
 
     print("")   # prints an empty line as progress is 100.0%
     if frames == 1:   # If only one frame, send the user a jpg, not a gif
-        if exists('static/images/' + name + '.jpg'):
-            os.remove('static/images/' + name + '.jpg')
-        os.rename("image.jpg", 'static/images/' + name + '.jpg')
+        if name != "image":
+            if exists('static/images/' + name + '.jpg'):
+                os.remove('static/images/' + name + '.jpg')
+            os.rename("static/images/image.jpg", 'static/images/' + name + '.jpg')
         return 'static/images/' + name + '.jpg'
 
     if loop:   # If loop is set to true, loop gif multiple times, else don't loop

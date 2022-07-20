@@ -137,8 +137,6 @@ dmypy.json
 # Pycharm
 .idea
 
-# static images
-image.jpg
-
-# Response Viewer for reading JSON
-ResponseViewer.py
+# Response Viewer for reading and saving JSON
+examples/ResponseViewer.py
+examples/ResponseViewer2.py

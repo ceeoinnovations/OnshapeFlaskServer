@@ -63,6 +63,12 @@ select {
 #loader {
     display: none;
 }
+#submit2 {
+    display: "block";
+}
+#loader2 {
+    display: none;
+}
 
 
 
