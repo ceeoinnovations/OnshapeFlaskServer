@@ -9,41 +9,60 @@
     <header><h1> Tufts CEEO App </h1></header>
     <hr>
 
-    <button onclick="hidePartsList()" class="hover">Features</button>
-    <div id="partsList">
+
+
+    <h3 style="text-align:left; color:#000000;" class="inline"> Create Parts and Learn CAD </h3><br><br>
+    <!-- Tab links -->
+    <div class="tab" style="width:423px">
+        <button class="tablinks" id="DimensionsTab" onclick="openTab(event, 'Dimensions')">Change Dimensions</button>
+        <button class="tablinks" id="PartsTab" onclick="openTab(event, 'Parts')">Create Parts</button>
+        <button class="tablinks" id="FeaturesTab" onclick="openTab(event, 'Features')">List Features</button>
+    </div>
+
+    <!-- Tab content -->
+    <div id="Dimensions" class="tabcontent">
+        <form action="/educateSet">
+            <span onclick="closeTab()" class="topright">&times</span>
+            <label for="value1">{{NAME1}}:</label>
+            <input type="text" id="value1" name="value1" value="{{VALUE1}}"><br><br>
+
+            <label for="value2">{{NAME2}}:</label>
+            <input type="text" id="value2" name="value2" value="{{VALUE2}}"><br><br>
+
+            <label for="value3">{{NAME3}}:</label>
+            <input type="text" id="value3" name="value3" value="{{VALUE3}}"><br><br>
+
+            <div><input type="submit" value="Submit" class="hover button submit" onclick="showLoader()"></div>
+            <div class="loader-container"><div class="loader"></div></div>
+        </form>
+    </div>
+
+    <div id="Parts" class="tabcontent">
+        <form action="/educateCreateCube">
+            <span onclick="closeTab()" class="topright">&times</span>
+            <div><input type="submit" value="Create Cube" class="hover button submit" onclick="showLoader()"></div>
+            <div class="loader-container"><div class="loader"></div></div>
+        </form>
+
+        <br><form action="/educateCreateCylinder">
+            <div><input type="submit" value="Create Cylinder" class="hover button submit" onclick="showLoader()"></div>
+            <div class="loader-container"><div class="loader"></div></div>
+        </form>
+
+<!--        <br><form action="/educateCreate">-->
+<!--            <div><input type="submit" value="Create Hemisphere" class="hover button submit" onclick="showLoader()"></div>-->
+<!--            <div class="loader-container"><div class="loader"></div></div>-->
+<!--        </form>-->
+    </div>
+
+    <div id="Features" class="tabcontent">
+        <span onclick="closeTab()" class="topright">&times</span>
         <p>{{FEATURES}}</p>
-<!--        <p>{{FEATURES2}}</p>-->
+        <p>{{FEATURES2}}</p>
     </div>
     <hr>
 
-    <form action="/educateSet">
-        <h3 style="text-align:left; color:#000000;"> CEEO Educate </h3>
 
-        <label for="value1">{{NAME1}}:</label>
-        <input type="text" id="value1" name="value1" value="{{VALUE1}}"><br><br>
-
-        <label for="value2">{{NAME2}}:</label>
-        <input type="text" id="value2" name="value2" value="{{VALUE2}}"><br><br>
-
-        <label for="value3">{{NAME3}}:</label>
-        <input type="text" id="value3" name="value3" value="{{VALUE3}}"><br><br>
-
-        <div id="submit"><input type="submit" value="Submit" class="hover button" onclick="showLoader()"></div>
-        <div class="loader-container" id="loader"><div class="loader"></div></div>
-    </form><br>
-
-    <form action="/educateCreate">
-
-        <div id="submit2"><input type="submit" value="Create Hemisphere" class="hover button submit" onclick="showLoader2()"></div>
-        <div class="loader-container" id="loader2"><div class="loader"></div></div>
-    </form><br>
-
-    <form action="/educateCreateCylinder">
-        <div id="submit3"><input type="submit" value="Create Cylinder" class="hover button submit" onclick="showLoader3()"></div>
-        <div class="loader-container" id="loader3"><div class="loader"></div></div>
-    </form>
-
-    <hr>
 
     <button onclick="hideidList()" class="hover">Document ID's</button>
     <div id="idList">
@@ -54,67 +73,71 @@
 
     <form action="/educate">
         <br>
-        <input type="submit" value="Reset" class="hover button">
+        <input type="submit" value="Reset" class="hover button submit" onclick="showLoader()">
+        <div class="loader-container" style="width:91.5px"><div class="loader"></div></div>
     </form>
     <br>
-
 </body>
 
 <script>
 function hidePartsList() {
-  const x = document.getElementById("partsList");
-  if (x.style.display === "block") {
+    const x = document.getElementById("partsList");
+    if (x.style.display === "block") {
     x.style.display = "none";
-  } else {
+    } else {
     x.style.display = "block";
-  }
+    }
 }
 
 function hideidList() {
-  var x = document.getElementById("idList");
-  if (x.style.display === "block") {
+    const x = document.getElementById("idList");
+    if (x.style.display === "block") {
     x.style.display = "none";
-  } else {
+    } else {
     x.style.display = "block";
-  }
+    }
 }
 
 function showLoader() {
-  let x = document.getElementById("submit");
-  let y = document.getElementById("loader");
+    let x = document.getElementsByClassName("submit");
+    let y = document.getElementsByClassName("loader-container");
+    let i = 0;
 
-  if (x.style.display === "none") {
-    x.style.display = "block";
-    y.style.display = "none";
-  } else {
-    x.style.display = "none";
-    y.style.display = "block";
-  }
-}
-
-function showLoader2() {
-  let x = document.getElementById("submit2");
-  let y = document.getElementById("loader2");
-
-  if (x.style.display === "none") {
-    x.style.display = "block";
-    y.style.display = "none";
-  } else {
-    x.style.display = "none";
-    y.style.display = "block";
-  }
-}
-
-function showLoader3() {
-    let x = document.getElementById("submit3");
-    let y = document.getElementById("loader3");
-
-    if (x.style.display === "none") {
-        x.style.display = "block";
-        y.style.display = "none";
-    } else {
-        x.style.display = "none";
-        y.style.display = "block";
+    for (i = 0; i < x.length; i++) {
+        x[i].style.display = "none";
+        y[i].style.display = "block";
     }
+}
+
+function openTab(evt, name) {
+    last = closeTab();
+
+    // Show the current tab, and add an "active" class to the button that opened the tab,
+    // only if it wasn't previously opened
+    if (last != name + "Tab") {
+        document.getElementById(name).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+    document.getElementById("print3").innerHTML = evt.currentTarget.className;
+}
+
+function closeTab() {
+    // Declare all variables
+    let i, tabcontent, tablinks;
+
+    // Get all elements with class="tabcontent" and hide them
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+
+    last = ""
+    // Get all elements with class="tablinks" and remove the class "active"
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+        if (tablinks[i].className.includes(" active")) {last = tablinks[i].id;}
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+    return last;
 }
 </script>

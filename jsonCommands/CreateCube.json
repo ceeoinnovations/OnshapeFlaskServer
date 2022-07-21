@@ -1,0 +1,18 @@
+{
+	"feature": {
+		"type": 134,
+		"typeName": "BTMFeature",
+		"message": {
+			"featureType": "cube",
+			"name": "Cube 1",
+			"parameters": [{
+				"type": 147,
+				"typeName": "BTMParameterQuantity",
+				"message": {
+					"expression": "50 mm",
+					"parameterId": "sideLength"
+				}
+			}]
+		}
+	}
+}

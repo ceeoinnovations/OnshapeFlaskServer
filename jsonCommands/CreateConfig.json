@@ -1,0 +1,42 @@
+{
+	"configurationParameters": [{
+		"type": 105,
+		"typeName": "BTMConfigurationParameterEnum",
+		"message": {
+			"enumName": "Size_conf",
+			"options": [{
+					"type": 592,
+					"typeName": "BTMEnumOption",
+					"message": {
+						"option": "Small",
+						"optionName": "Small"
+					}
+				},
+				{
+					"type": 592,
+					"typeName": "BTMEnumOption",
+					"message": {
+						"option": "Large",
+						"optionName": "Large"
+					}
+				}
+			],
+			"namespace": "",
+			"defaultValue": "Small",
+			"parameterId": "Size",
+			"parameterName": "Size",
+			"hasUserCode": false,
+			"nodeId": "MgfIjLtd/DvuaT/P/"
+		}
+	}],
+	"currentConfiguration": [{
+		"type": 145,
+		"typeName": "BTMParameterEnum",
+		"message": {
+			"enumName": "Size_conf",
+			"value": "Large",
+			"namespace": "",
+			"parameterId": "Size"
+		}
+	}]
+}
