@@ -39,8 +39,8 @@
             <option value="Flipped Isometric" {% if condition2=="FlippedIsometric" %} selected="selected" {% endif %}>Flipped Isometric</option>
         </select>
 
-        <div id="submit"><input type="submit" name="refresh" value="Refresh" class="hover button" onclick="showLoader()"></div>
-        <div class="loader-container" id="loader"><div class="loader"></div></div>
+        <div><input type="submit" name="refresh" value="Refresh" class="hover button submit" onclick="showLoader()"></div>
+        <div class="loader-container" style="width:105.7px;"><div class="loader"></div></div>
     </form>
     <hr>
 
@@ -53,7 +53,8 @@
 
     <form action="/home2">
         <br>
-        <input type="submit" value="Reset" class="hover button">
+        <input type="submit" value="Reset" class="hover button submit" onclick="showLoader()">
+        <div class="loader-container" style="width:91.5px"><div class="loader"></div></div>
     </form>
     <br>
 
@@ -79,14 +80,13 @@ function hideidList() {
 }
 
 function showLoader() {
-  var x = document.getElementById("submit");
-  var y = document.getElementById("loader");
-  if (x.style.display === "none") {
-    x.style.display = "block";
-    y.style.display = "none";
-  } else {
-    x.style.display = "none";
-    y.style.display = "block";
-  }
+    let x = document.getElementsByClassName("submit");
+    let y = document.getElementsByClassName("loader-container");
+    let i = 0;
+
+    for (i = 0; i < x.length; i++) {
+        x[i].style.display = "none";
+        y[i].style.display = "block";
+    }
 }
 </script>

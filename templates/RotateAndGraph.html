@@ -58,8 +58,8 @@
             {% endfor %}
         </select><br><br>
 
-        <div id="submit"><input type="submit" value="Submit" class="hover button" onclick="showLoader()"></div>
-        <div class="loader-container" id="loader"><div class="loader"></div></div>
+        <div><input type="submit" value="Submit" class="hover button submit" onclick="showLoader()"></div>
+        <div class="loader-container"><div class="loader"></div></div>
 
         {% if condition1 %}
             <img src="data:image/jpeg;base64,{{ image1 }}" alt="Graph of the data"/>
@@ -77,7 +77,8 @@
 
     <form action="/home">
         <br>
-        <input type="submit" value="Reset" class="hover button">
+        <input type="submit" value="Reset" class="hover button submit" onclick="showLoader(true)" id="reset">
+        <div class="loader-container" style="width:91.5px"><div class="loader"></div></div>
     </form>
     <br>
 </body>
@@ -102,16 +103,19 @@ function hideIdList() {
 }
 
 function showLoader() {
-  var x = document.getElementById("submit");
-  var y = document.getElementById("loader");
+    showLoader(false);
+}
+
+function showLoader(override) {
+  let x = document.getElementsByClassName("submit");
+  let y = document.getElementsByClassName("loader-container");
   const id1 = document.getElementById("rotate_part");
 
-  if (x.style.display === "none" || !id1.checkValidity()) {
-    x.style.display = "block";
-    y.style.display = "none";
-  } else {
-    x.style.display = "none";
-    y.style.display = "block";
+  if (override || id1.checkValidity()) {
+    for (i = 0; i < x.length; i++) {
+        x[i].style.display = "none";
+        y[i].style.display = "block";
+    }
   }
 }
 </script>
