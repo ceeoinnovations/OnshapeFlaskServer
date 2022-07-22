@@ -14,9 +14,10 @@
     <h3 style="text-align:left; color:#000000;" class="inline"> Create Parts and Learn CAD </h3><br><br>
     <!-- Tab links -->
     <div class="tab" style="width:423px">
-        <button class="tablinks" id="DimensionsTab" onclick="openTab(event, 'Dimensions')">Change Dimensions</button>
-        <button class="tablinks" id="PartsTab" onclick="openTab(event, 'Parts')">Create Parts</button>
-        <button class="tablinks" id="FeaturesTab" onclick="openTab(event, 'Features')">List Features</button>
+        <button class="tablinks" id="DimensionsTab" onclick="openTab('DimensionsTab', 'Dimensions')">
+            Change Dimensions</button>
+        <button class="tablinks" id="PartsTab" onclick="openTab('PartsTab', 'Parts')">Create Parts</button>
+        <button class="tablinks" id="FeaturesTab" onclick="openTab('FeaturesTab', 'Features')">List Features</button>
     </div>
 
     <!-- Tab content -->
@@ -24,29 +25,46 @@
         <form action="/educateSet">
             <span onclick="closeTab()" class="topright">&times</span>
             <label for="value1">{{NAME1}}:</label>
-            <input type="text" id="value1" name="value1" value="{{VALUE1}}"><br><br>
+            <input type="text" id="value1" name="value1" value="{{VALUE1}}" class="dimensionInput"><br><br>
 
             <label for="value2">{{NAME2}}:</label>
-            <input type="text" id="value2" name="value2" value="{{VALUE2}}"><br><br>
+            <input type="text" id="value2" name="value2" value="{{VALUE2}}" class="dimensionInput"><br><br>
 
             <label for="value3">{{NAME3}}:</label>
-            <input type="text" id="value3" name="value3" value="{{VALUE3}}"><br><br>
+            <input type="text" id="value3" name="value3" value="{{VALUE3}}" class="dimensionInput"><br><br>
 
-            <div><input type="submit" value="Submit" class="hover button submit" onclick="showLoader()"></div>
+            <input type="submit" value="Submit" class="hover button submit" onclick="showLoader()">
             <div class="loader-container"><div class="loader"></div></div>
         </form>
     </div>
 
     <div id="Parts" class="tabcontent">
+        <span onclick="closeTab()" class="topright">&times</span>
         <form action="/educateCreateCube">
-            <span onclick="closeTab()" class="topright">&times</span>
-            <div><input type="submit" value="Create Cube" class="hover button submit" onclick="showLoader()"></div>
-            <div class="loader-container"><div class="loader"></div></div>
+
+            <div class="form__group">
+                <input type="text" id="cubeLength" class="form__field" name="cubeLength" value="{{CUBE}}">
+                <label for="cubeLength" class="form__label label">Side Length:</label>
+            </div>
+
+            <input type="submit" value="Create Cube" class="hover button submit" onclick="showLoader()">
+            <div class="loader-container" style="width:140.5px"><div class="loader"></div></div>
         </form>
 
         <br><form action="/educateCreateCylinder">
-            <div><input type="submit" value="Create Cylinder" class="hover button submit" onclick="showLoader()"></div>
-            <div class="loader-container"><div class="loader"></div></div>
+            <div class="form__group">
+                <input type="text" id="cylinderDiameter" class="form__field" name="cylinderDiameter"
+                       value="{{CYLINDER1}}">
+                <label for="cylinderDiameter" class="form__label label">Diameter:</label>
+            </div>
+            <div class="form__group">
+                <input type="text" id="cylinderExtrude" class="form__field" name="cylinderExtrude"
+                       value="{{CYLINDER2}}">
+                <label for="cylinderExtrude" class="form__label label">Height:</label>
+            </div>
+
+            <input type="submit" value="Create Cylinder" class="hover button submit" onclick="showLoader()">
+            <div class="loader-container" style="width:160.5px"><div class="loader"></div></div>
         </form>
 
 <!--        <br><form action="/educateCreate">-->
@@ -105,20 +123,19 @@ function showLoader() {
 
     for (i = 0; i < x.length; i++) {
         x[i].style.display = "none";
-        y[i].style.display = "block";
+        y[i].style.display = "inline-block";
     }
 }
 
-function openTab(evt, name) {
+function openTab(tabName, name) {
     last = closeTab();
 
     // Show the current tab, and add an "active" class to the button that opened the tab,
     // only if it wasn't previously opened
-    if (last != name + "Tab") {
+    if (last != tabName) {
         document.getElementById(name).style.display = "block";
-        evt.currentTarget.className += " active";
+        document.getElementById(tabName).className += " active";
     }
-    document.getElementById("print3").innerHTML = evt.currentTarget.className;
 }
 
 function closeTab() {
@@ -140,4 +157,12 @@ function closeTab() {
     }
     return last;
 }
+
+// For Flask
+var tab_name1 = "{{TABNAME}}";
+var tab_name2 = "{{NAME}}";
+if (tab_name1 != "") {
+    openTab(tab_name1, tab_name2);
+}
+
 </script>

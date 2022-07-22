@@ -395,8 +395,10 @@ def educate_create_cube():
         WID = wid
         EID = eid
 
-    create_cube()
-    return educate()
+    cube_length = request.args.get('cubeLength')
+    create_cube(cube_length)
+
+    return educate("PartsTab", "Parts")
 
 
 @app.route('/educateCreateCylinder')
@@ -412,8 +414,10 @@ def educate_create_cylinder():
         WID = wid
         EID = eid
 
-    create_cylinder()
-    return educate()
+    cylinder_diameter = request.args.get('cylinderDiameter')
+    cylinder_extrude = request.args.get('cylinderExtrude')
+    create_cylinder(cylinder_diameter, cylinder_extrude)
+    return educate("PartsTab", "Parts")
 
 
 # Reset page for part assembly, CEEO Educate
@@ -535,12 +539,12 @@ def educate_set():
     client.api_client.request(method, url=base + fixed_url2, query_params=params, headers=headers, body=payload2)
 
     # Returns html webpage and make api calls using template 'Jupyter.html'
-    return educate()
+    return educate("DimensionsTab", "Dimensions")
 
 
 # Home page for part assembly, CEEO Educate
 @app.route('/educate')
-def educate():
+def educate(tab_name="", name=""):
     global EID, WID, DID
 
     did = request.args.get('documentId')
@@ -551,6 +555,16 @@ def educate():
         DID = did
         WID = wid
         EID = eid
+
+    cube_length = request.args.get('cubeLength')
+    if not cube_length:
+        cube_length = "30 mm"
+    cylinder_diameter = request.args.get('cylinderDiameter')
+    if not cylinder_diameter:
+        cylinder_diameter = "50 mm"
+    cylinder_extrude = request.args.get('cylinderExtrude')
+    if not cylinder_extrude:
+        cylinder_extrude = "25 mm"
 
     # Generate Onshape URL and client for API calls
     fixed_url = '/api/partstudios/d/' + DID + '/w/' + WID + '/e/' + EID + '/features'
@@ -570,7 +584,9 @@ def educate():
 
     # Returns html webpage and make api calls using template 'Educate.html']
     return render_template('Educate.html', DID=DID, WID=WID, EID=EID, STEP=STEP, FEATURES=parsed,
-                           NAME1=name1, VALUE1=val1, NAME2=name2, VALUE2=val2, NAME3=name3, VALUE3=val3)
+                           NAME1=name1, VALUE1=val1, NAME2=name2, VALUE2=val2, NAME3=name3, VALUE3=val3,
+                           CUBE=cube_length, CYLINDER1=cylinder_diameter, CYLINDER2=cylinder_extrude,
+                           TABNAME=tab_name, NAME=name)
 
 
 # -------------------------------------------------------------------------------------------#
@@ -979,10 +995,12 @@ def stepping_rotation(frames=60, rotation=360.0, zoom_start=0.001, zoom_end=0.00
 # -----------------------------------------------------#
 # ------------ Educate JSON Functions -----------------#
 # -----------------------------------------------------#
-def create_cylinder():
+def create_cylinder(cylinder_diameter="50 mm", cylinder_extrude="25 mm"):
     global DID, WID, EID
     with open('jsonCommands/CreateCircle.json', 'r') as openfile:
         json_object = json.load(openfile)  # Reading from json file
+    json_object["feature"]["message"]["constraints"][1]["message"]["parameters"][1]["message"]["exoression"] = \
+        cylinder_diameter
 
     fixed_url = '/api/partstudios/d/' + DID + '/w/' + WID + '/e/' + EID + '/features'
 
@@ -1000,15 +1018,17 @@ def create_cylinder():
     with open('jsonCommands/ExtrudeSketch.json', 'r') as openfile:
         json_object = json.load(openfile)  # Reading from json file
     json_object["feature"]["message"]["parameters"][2]["message"]["queries"][0]["message"]["featureId"] = fid
+    json_object["feature"]["message"]["parameters"][4]["message"]["expression"] = cylinder_extrude
     payload = json_object
     client.api_client.request(method, url=base + fixed_url, query_params=params, headers=headers, body=payload)
 
 
-def create_cube():
+def create_cube(cube_length="30 mm"):
     global DID, WID, EID
 
     with open('jsonCommands/CreateCube.json', 'r') as openfile:
         json_object = json.load(openfile)  # Reading from json file
+    json_object["feature"]["message"]["parameters"][0]["message"]["expression"] = cube_length
 
     fixed_url = '/api/partstudios/d/' + DID + '/w/' + WID + '/e/' + EID + '/features'
     method = 'POST'
