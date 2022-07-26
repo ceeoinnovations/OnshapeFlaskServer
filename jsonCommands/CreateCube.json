@@ -4,7 +4,7 @@
 		"typeName": "BTMFeature",
 		"message": {
 			"featureType": "cube",
-			"name": "Cube 1",
+			"name": "Cube",
 			"parameters": [{
 				"type": 147,
 				"typeName": "BTMParameterQuantity",

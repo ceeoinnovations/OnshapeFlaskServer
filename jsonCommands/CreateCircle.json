@@ -86,7 +86,7 @@
 				}
 			}],
 			"featureType": "newSketch",
-			"name": "Sketch 1",
+			"name": "Circle",
 			"parameters": [{
 				"type": 148,
 				"typeName": "BTMParameterQueryList",

@@ -67,6 +67,27 @@
             <div class="loader-container" style="width:160.5px"><div class="loader"></div></div>
         </form>
 
+        <br><form action="/educateCreateRectangle">
+            <div class="form__group">
+                <input type="text" id="rectangleWidth" class="form__field" name="rectangleWidth"
+                       value="{{RECTANGLE1}}">
+                <label for="rectangleWidth" class="form__label label">Width:</label>
+            </div>
+            <div class="form__group">
+                <input type="text" id="rectangleLength" class="form__field" name="rectangleLength"
+                       value="{{RECTANGLE2}}">
+                <label for="rectangleLength" class="form__label label">Length:</label>
+            </div>
+            <div class="form__group">
+                <input type="text" id="rectangleHeight" class="form__field" name="rectangleHeight"
+                       value="{{RECTANGLE3}}">
+                <label for="rectangleHeight" class="form__label label">Height:</label>
+            </div>
+
+            <input type="submit" value="Create Rectangle" class="hover button submit" onclick="showLoader()">
+            <div class="loader-container" style="width:160.5px"><div class="loader"></div></div>
+        </form>
+
 <!--        <br><form action="/educateCreate">-->
 <!--            <div><input type="submit" value="Create Hemisphere" class="hover button submit" onclick="showLoader()"></div>-->
 <!--            <div class="loader-container"><div class="loader"></div></div>-->

@@ -382,6 +382,27 @@ def jupyter():
 # ----------------------------#
 # ----CEEO Educate------------#
 # ----------------------------#
+@app.route('/educateCreateRectangle')
+def educate_create_rectangle():
+    global EID, WID, DID
+
+    did = request.args.get('documentId')
+    wid = request.args.get('workspaceId')
+    eid = request.args.get('elementId')
+
+    if did or wid or eid:
+        DID = did
+        WID = wid
+        EID = eid
+
+    width = request.args.get('rectangleWidth')
+    length = request.args.get('rectangleLength')
+    height = request.args.get('rectangleHeight')
+    create_rectangle(width, length, height)
+
+    return educate("PartsTab", "Parts")
+
+
 @app.route('/educateCreateCube')
 def educate_create_cube():
     global EID, WID, DID
@@ -565,6 +586,15 @@ def educate(tab_name="", name=""):
     cylinder_extrude = request.args.get('cylinderExtrude')
     if not cylinder_extrude:
         cylinder_extrude = "25 mm"
+    rectangle_width = request.args.get('rectangleWidth')
+    if not rectangle_width:
+        rectangle_width = "20 mm"
+    rectangle_length = request.args.get('rectangleLength')
+    if not rectangle_length:
+        rectangle_length = "50 mm"
+    rectangle_height = request.args.get('rectangleHeight')
+    if not rectangle_height:
+        rectangle_height = "30 mm"
 
     # Generate Onshape URL and client for API calls
     fixed_url = '/api/partstudios/d/' + DID + '/w/' + WID + '/e/' + EID + '/features'
@@ -586,7 +616,8 @@ def educate(tab_name="", name=""):
     return render_template('Educate.html', DID=DID, WID=WID, EID=EID, STEP=STEP, FEATURES=parsed,
                            NAME1=name1, VALUE1=val1, NAME2=name2, VALUE2=val2, NAME3=name3, VALUE3=val3,
                            CUBE=cube_length, CYLINDER1=cylinder_diameter, CYLINDER2=cylinder_extrude,
-                           TABNAME=tab_name, NAME=name)
+                           TABNAME=tab_name, NAME=name, RECTANGLE1=rectangle_width, RECTANGLE2=rectangle_length,
+                           RECTANGLE3=rectangle_height)
 
 
 # -------------------------------------------------------------------------------------------#
@@ -1001,24 +1032,24 @@ def create_cylinder(cylinder_diameter="50 mm", cylinder_extrude="25 mm"):
         json_object = json.load(openfile)  # Reading from json file
     json_object["feature"]["message"]["constraints"][1]["message"]["parameters"][1]["message"]["exoression"] = \
         cylinder_diameter
+    json_object["feature"]["message"]["name"] += " " + cylinder_diameter
 
     fixed_url = '/api/partstudios/d/' + DID + '/w/' + WID + '/e/' + EID + '/features'
-
     method = 'POST'
     params = {}
     payload = json_object
     headers = {'Accept': 'application/vnd.onshape.v1+json; charset=UTF-8;qs=0.1',
                'Content-Type': 'application/json'}
-
     response = client.api_client.request(method, url=base + fixed_url, query_params=params, headers=headers,
                                          body=payload)
-    response = json.loads(response.data)
 
+    response = json.loads(response.data)
     fid = response["feature"]["message"]["featureId"]
     with open('jsonCommands/ExtrudeSketch.json', 'r') as openfile:
         json_object = json.load(openfile)  # Reading from json file
     json_object["feature"]["message"]["parameters"][2]["message"]["queries"][0]["message"]["featureId"] = fid
     json_object["feature"]["message"]["parameters"][4]["message"]["expression"] = cylinder_extrude
+    json_object["feature"]["message"]["name"] = "Extrude Circle " + cylinder_extrude
     payload = json_object
     client.api_client.request(method, url=base + fixed_url, query_params=params, headers=headers, body=payload)
 
@@ -1029,6 +1060,7 @@ def create_cube(cube_length="30 mm"):
     with open('jsonCommands/CreateCube.json', 'r') as openfile:
         json_object = json.load(openfile)  # Reading from json file
     json_object["feature"]["message"]["parameters"][0]["message"]["expression"] = cube_length
+    json_object["feature"]["message"]["name"] += " " + cube_length
 
     fixed_url = '/api/partstudios/d/' + DID + '/w/' + WID + '/e/' + EID + '/features'
     method = 'POST'
@@ -1036,4 +1068,33 @@ def create_cube(cube_length="30 mm"):
     payload = json_object
     headers = {'Accept': 'application/vnd.onshape.v1+json; charset=UTF-8;qs=0.1',
                'Content-Type': 'application/json'}
+    client.api_client.request(method, url=base + fixed_url, query_params=params, headers=headers, body=payload)
+
+
+def create_rectangle(width="20 mm", length="50 mm", height="30 mm"):
+    global DID, WID, EID
+
+    with open('jsonCommands/CreateRectangle.json', 'r') as openfile:
+        json_object = json.load(openfile)  # Reading from json file
+    json_object["feature"]["message"]["constraints"][11]["message"]["parameters"][3]["message"]["expression"] = width
+    json_object["feature"]["message"]["constraints"][12]["message"]["parameters"][3]["message"]["expression"] = length
+    json_object["feature"]["message"]["name"] += " " + width + " by " + length
+
+    fixed_url = '/api/partstudios/d/' + DID + '/w/' + WID + '/e/' + EID + '/features'
+    method = 'POST'
+    params = {}
+    payload = json_object
+    headers = {'Accept': 'application/vnd.onshape.v1+json; charset=UTF-8;qs=0.1',
+               'Content-Type': 'application/json'}
+    response = client.api_client.request(method, url=base + fixed_url, query_params=params, headers=headers,
+                                         body=payload)
+
+    response = json.loads(response.data)
+    fid = response["feature"]["message"]["featureId"]
+    with open('jsonCommands/ExtrudeSketch.json', 'r') as openfile:
+        json_object = json.load(openfile)  # Reading from json file
+    json_object["feature"]["message"]["parameters"][2]["message"]["queries"][0]["message"]["featureId"] = fid
+    json_object["feature"]["message"]["parameters"][4]["message"]["expression"] = height
+    json_object["feature"]["message"]["name"] = "Extrude Rectangle " + height
+    payload = json_object
     client.api_client.request(method, url=base + fixed_url, query_params=params, headers=headers, body=payload)
