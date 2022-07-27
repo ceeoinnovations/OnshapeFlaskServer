@@ -88,6 +88,27 @@
             <div class="loader-container" style="width:160.5px"><div class="loader"></div></div>
         </form>
 
+        <br><form action="/educateCreateSphere">
+            <div class="form__group">
+                <input type="text" id="sphereRadius" class="form__field" name="sphereRadius"
+                       value="{{SPHERE1}}">
+                <label for="sphereRadius" class="form__label label">Radius:</label>
+            </div>
+            <div class="form__group">
+                <input type="text" id="sphereAngle" class="form__field" name="sphereAngle"
+                       value="{{SPHERE2}}">
+                <label for="sphereAngle" class="form__label label">Arc Angle:</label>
+            </div>
+            <div class="form__group">
+                <input type="text" id="sphereRevolute" class="form__field" name="sphereRevolute"
+                       value="{{SPHERE3}}">
+                <label for="sphereRevolute" class="form__label label">Revolution:</label>
+            </div>
+
+            <input type="submit" value="Create Sphere" class="hover button submit" onclick="showLoader()">
+            <div class="loader-container" style="width:160.5px"><div class="loader"></div></div>
+        </form>
+
 <!--        <br><form action="/educateCreate">-->
 <!--            <div><input type="submit" value="Create Hemisphere" class="hover button submit" onclick="showLoader()"></div>-->
 <!--            <div class="loader-container"><div class="loader"></div></div>-->

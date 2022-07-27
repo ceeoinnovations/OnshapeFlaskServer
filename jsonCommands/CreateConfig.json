@@ -21,7 +21,6 @@
 					}
 				}
 			],
-			"namespace": "",
 			"defaultValue": "Small",
 			"parameterId": "Size",
 			"parameterName": "Size",
@@ -35,7 +34,6 @@
 		"message": {
 			"enumName": "Size_conf",
 			"value": "Large",
-			"namespace": "",
 			"parameterId": "Size"
 		}
 	}]

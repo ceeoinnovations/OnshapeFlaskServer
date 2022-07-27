@@ -24,8 +24,7 @@
 						"centerId": "",
 						"internalIds": [],
 						"parameters": [],
-						"entityId": "2Vr3LIHRoGFG.bottom",
-						"namespace": ""
+						"entityId": "2Vr3LIHRoGFG.bottom"
 					}
 				}, {
 					"type": 155,
@@ -48,8 +47,7 @@
 						"centerId": "",
 						"internalIds": [],
 						"parameters": [],
-						"entityId": "2Vr3LIHRoGFG.top",
-						"namespace": ""
+						"entityId": "2Vr3LIHRoGFG.top"
 					}
 				},
 				{
@@ -73,8 +71,7 @@
 						"centerId": "",
 						"internalIds": [],
 						"parameters": [],
-						"entityId": "2Vr3LIHRoGFG.left",
-						"namespace": ""
+						"entityId": "2Vr3LIHRoGFG.left"
 					}
 				}, {
 					"type": 155,
@@ -97,8 +94,7 @@
 						"centerId": "",
 						"internalIds": [],
 						"parameters": [],
-						"entityId": "2Vr3LIHRoGFG.right",
-						"namespace": ""
+						"entityId": "2Vr3LIHRoGFG.right"
 					}
 				},
 				{
@@ -110,8 +106,7 @@
 						"isUserPoint": true,
 						"isConstruction": true,
 						"parameters": [],
-						"entityId": "2Vr3LIHRoGFG.middle",
-						"namespace": ""
+						"entityId": "2Vr3LIHRoGFG.middle"
 					}
 				}
 			],
@@ -146,8 +141,7 @@
 							}
 						],
 						"helpParameters": [],
-						"entityId": "2Vr3LIHRoGFG.mid1",
-						"namespace": ""
+						"entityId": "2Vr3LIHRoGFG.mid1"
 					}
 				},
 				{
@@ -181,8 +175,7 @@
 							}
 						],
 						"helpParameters": [],
-						"entityId": "2Vr3LIHRoGFG.mid2",
-						"namespace": ""
+						"entityId": "2Vr3LIHRoGFG.mid2"
 					}
 				},
 				{
@@ -208,8 +201,7 @@
 							}
 						],
 						"helpParameters": [],
-						"entityId": "2Vr3LIHRoGFG.perpendicular",
-						"namespace": ""
+						"entityId": "2Vr3LIHRoGFG.perpendicular"
 					}
 				},
 				{
@@ -235,8 +227,7 @@
 							}
 						],
 						"helpParameters": [],
-						"entityId": "2Vr3LIHRoGFG.parallel.1",
-						"namespace": ""
+						"entityId": "2Vr3LIHRoGFG.parallel.1"
 					}
 				},
 				{
@@ -262,8 +253,7 @@
 							}
 						],
 						"helpParameters": [],
-						"entityId": "2Vr3LIHRoGFG.parallel.2",
-						"namespace": ""
+						"entityId": "2Vr3LIHRoGFG.parallel.2"
 					}
 				},
 				{
@@ -280,8 +270,7 @@
 							}
 						}],
 						"helpParameters": [],
-						"entityId": "2Vr3LIHRoGFG.horizontal",
-						"namespace": ""
+						"entityId": "2Vr3LIHRoGFG.horizontal"
 					}
 				},
 				{
@@ -307,8 +296,7 @@
 							}
 						],
 						"helpParameters": [],
-						"entityId": "2Vr3LIHRoGFG.corner0",
-						"namespace": ""
+						"entityId": "2Vr3LIHRoGFG.corner0"
 					}
 				},
 				{
@@ -334,8 +322,7 @@
 							}
 						],
 						"helpParameters": [],
-						"entityId": "2Vr3LIHRoGFG.corner1",
-						"namespace": ""
+						"entityId": "2Vr3LIHRoGFG.corner1"
 					}
 				},
 				{
@@ -361,8 +348,7 @@
 							}
 						],
 						"helpParameters": [],
-						"entityId": "2Vr3LIHRoGFG.corner2",
-						"namespace": ""
+						"entityId": "2Vr3LIHRoGFG.corner2"
 					}
 				},
 				{
@@ -388,8 +374,7 @@
 							}
 						],
 						"helpParameters": [],
-						"entityId": "2Vr3LIHRoGFG.corner3",
-						"namespace": ""
+						"entityId": "2Vr3LIHRoGFG.corner3"
 					}
 				},
 				{
@@ -423,8 +408,7 @@
 							}
 						],
 						"helpParameters": [],
-						"entityId": "2Vr3LIHRoGFG.middle.positionSnap0",
-						"namespace": ""
+						"entityId": "2Vr3LIHRoGFG.middle.positionSnap0"
 					}
 				},
 				{
@@ -454,7 +438,6 @@
 								"message": {
 									"enumName": "DimensionDirection",
 									"value": "MINIMUM",
-									"namespace": "",
 									"parameterId": "direction"
 								}
 							},
@@ -472,7 +455,6 @@
 								"message": {
 									"enumName": "DimensionHalfSpace",
 									"value": "LEFT",
-									"namespace": "",
 									"parameterId": "halfSpace0"
 								}
 							},
@@ -482,7 +464,6 @@
 								"message": {
 									"enumName": "DimensionHalfSpace",
 									"value": "RIGHT",
-									"namespace": "",
 									"parameterId": "halfSpace1"
 								}
 							},
@@ -504,8 +485,7 @@
 							}
 						],
 						"helpParameters": [],
-						"entityId": "pGNDKioD2du7",
-						"namespace": ""
+						"entityId": "pGNDKioD2du7"
 					}
 				},
 				{
@@ -535,7 +515,6 @@
 								"message": {
 									"enumName": "DimensionDirection",
 									"value": "MINIMUM",
-									"namespace": "",
 									"parameterId": "direction"
 								}
 							},
@@ -553,7 +532,6 @@
 								"message": {
 									"enumName": "DimensionHalfSpace",
 									"value": "LEFT",
-									"namespace": "",
 									"parameterId": "halfSpace0"
 								}
 							},
@@ -563,7 +541,6 @@
 								"message": {
 									"enumName": "DimensionHalfSpace",
 									"value": "RIGHT",
-									"namespace": "",
 									"parameterId": "halfSpace1"
 								}
 							},
@@ -585,8 +562,7 @@
 							}
 						],
 						"helpParameters": [],
-						"entityId": "JzT3fBLuZiAS",
-						"namespace": ""
+						"entityId": "JzT3fBLuZiAS"
 					}
 				}
 			],
@@ -615,9 +591,7 @@
 						"parameterId": "disableImprinting"
 					}
 				}
-			],
-			"namespace": "",
-			"subFeatures": []
+			]
 		}
 	}
 }

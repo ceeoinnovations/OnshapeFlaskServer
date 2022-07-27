@@ -1,0 +1,116 @@
+{
+	"feature": {
+		"type": 134,
+		"typeName": "BTMFeature",
+		"message": {
+			"featureType": "revolve",
+			"name": "Revolve",
+			"parameters": [{
+				"type": 145,
+				"typeName": "BTMParameterEnum",
+				"message": {
+					"enumName": "ToolBodyType",
+					"value": "SOLID",
+					"parameterId": "bodyType"
+				}
+			}, {
+				"type": 145,
+				"typeName": "BTMParameterEnum",
+				"message": {
+					"enumName": "NewBodyOperationType",
+					"value": "NEW",
+					"parameterId": "operationType"
+				}
+			}, {
+				"type": 145,
+				"typeName": "BTMParameterEnum",
+				"message": {
+					"enumName": "NewSurfaceOperationType",
+					"value": "NEW",
+					"parameterId": "surfaceOperationType"
+				}
+			}, {
+				"type": 148,
+				"typeName": "BTMParameterQueryList",
+				"message": {
+					"queries": [{
+						"type": 140,
+						"typeName": "BTMIndividualSketchRegionQuery",
+						"message": {
+							"featureId": "FJ6BYi9PLhGyplP_0"
+						}
+					}],
+					"parameterId": "entities"
+				}
+			}, {
+				"type": 148,
+				"typeName": "BTMParameterQueryList",
+				"message": {
+					"queries": [],
+					"parameterId": "surfaceEntities"
+				}
+			}, {
+				"type": 148,
+				"typeName": "BTMParameterQueryList",
+				"message": {
+					"queries": [{
+						"type": 138,
+						"typeName": "BTMIndividualQuery",
+						"message": {
+							"geometryIds": ["JHB"]
+						}
+					}],
+					"parameterId": "axis"
+				}
+			}, {
+				"type": 145,
+				"typeName": "BTMParameterEnum",
+				"message": {
+					"enumName": "RevolveType",
+					"value": "ONE_DIRECTION",
+					"parameterId": "revolveType"
+				}
+			}, {
+				"type": 144,
+				"typeName": "BTMParameterBoolean",
+				"message": {
+					"parameterId": "oppositeDirection"
+				}
+			}, {
+				"type": 147,
+				"typeName": "BTMParameterQuantity",
+				"message": {
+					"expression": "180 deg",
+					"parameterId": "angle"
+				}
+			}, {
+				"type": 144,
+				"typeName": "BTMParameterBoolean",
+				"message": {
+					"parameterId": "defaultScope"
+				}
+			}, {
+				"type": 148,
+				"typeName": "BTMParameterQueryList",
+				"message": {
+					"queries": [],
+					"parameterId": "booleanScope"
+				}
+			}, {
+				"type": 144,
+				"typeName": "BTMParameterBoolean",
+				"message": {
+					"value": true,
+					"parameterId": "defaultSurfaceScope"
+				}
+			}, {
+				"type": 148,
+				"typeName": "BTMParameterQueryList",
+				"message": {
+					"queries": [],
+					"parameterId": "booleanSurfaceScope"
+				}
+			}]
+		}
+	}
+}

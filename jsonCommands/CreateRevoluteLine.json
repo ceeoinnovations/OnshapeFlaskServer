@@ -1,0 +1,100 @@
+{
+	"feature": {
+		"type": 151,
+		"typeName": "BTMSketch",
+		"message": {
+			"entities": [{
+				"type": 155,
+				"typeName": "BTMSketchCurveSegment",
+				"message": {
+					"startPointId": "VYBSSDXsgJiL.start",
+					"endPointId": "VYBSSDXsgJiL.end",
+					"startParam": -0.0025229884777218103,
+					"endParam": 0.0025229884777218103,
+					"geometry": {
+						"type": 117,
+						"typeName": "BTCurveGeometryLine",
+						"message": {
+							"pntX": 0.0,
+							"pntY": 0.0025229884777218103,
+							"dirX": 0.0,
+							"dirY": 1.0
+						}
+					},
+					"centerId": "",
+					"internalIds": [],
+					"parameters": [],
+					"entityId": "VYBSSDXsgJiL"
+				}
+			}],
+			"constraints": [{
+				"type": 2,
+				"typeName": "BTMSketchConstraint",
+				"message": {
+					"constraintType": "COINCIDENT",
+					"parameters": [{
+						"type": 149,
+						"typeName": "BTMParameterString",
+						"message": {
+							"value": "VYBSSDXsgJiL.start",
+							"parameterId": "localFirst"
+						}
+					}, {
+						"type": 148,
+						"typeName": "BTMParameterQueryList",
+						"message": {
+							"queries": [{
+								"type": 138,
+								"typeName": "BTMIndividualQuery",
+								"message": {
+									"geometryIds": ["IB"]
+								}
+							}],
+							"parameterId": "externalSecond"
+						}
+					}],
+					"helpParameters": [],
+					"entityId": "VYBSSDXsgJiL.startSnap0"
+				}
+			}, {
+				"type": 2,
+				"typeName": "BTMSketchConstraint",
+				"message": {
+					"constraintType": "VERTICAL",
+					"parameters": [{
+						"type": 149,
+						"typeName": "BTMParameterString",
+						"message": {
+							"value": "VYBSSDXsgJiL",
+							"parameterId": "localFirst"
+						}
+					}],
+					"helpParameters": [],
+					"entityId": "VYBSSDXsgJiL.endSnap0"
+				}
+			}],
+			"featureType": "newSketch",
+			"name": "Revolute Line",
+			"parameters": [{
+				"type": 148,
+				"typeName": "BTMParameterQueryList",
+				"message": {
+					"queries": [{
+						"type": 138,
+						"typeName": "BTMIndividualQuery",
+						"message": {
+							"geometryIds": ["JDC"]
+						}
+					}],
+					"parameterId": "sketchPlane"
+				}
+			}, {
+				"type": 144,
+				"typeName": "BTMParameterBoolean",
+				"message": {
+					"parameterId": "disableImprinting"
+				}
+			}]
+		}
+	}
+}

@@ -4,7 +4,7 @@
 		"typeName": "BTMFeature",
 		"message": {
 			"featureType": "extrude",
-			"name": "Extrude 1",
+			"name": "Extrude",
 			"parameters": [{
 					"type": 145,
 					"typeName": "BTMParameterEnum",

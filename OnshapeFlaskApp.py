@@ -382,6 +382,27 @@ def jupyter():
 # ----------------------------#
 # ----CEEO Educate------------#
 # ----------------------------#
+@app.route('/educateCreateSphere')
+def educate_create_sphere():
+    global EID, WID, DID
+
+    did = request.args.get('documentId')
+    wid = request.args.get('workspaceId')
+    eid = request.args.get('elementId')
+
+    if did or wid or eid:
+        DID = did
+        WID = wid
+        EID = eid
+
+    radius = request.args.get('sphereRadius')
+    angle = request.args.get('sphereAngle')
+    revolute = request.args.get('sphereRevolute')
+    create_sphere(radius, angle, revolute)
+
+    return educate("PartsTab", "Parts")
+
+
 @app.route('/educateCreateRectangle')
 def educate_create_rectangle():
     global EID, WID, DID
@@ -595,29 +616,30 @@ def educate(tab_name="", name=""):
     rectangle_height = request.args.get('rectangleHeight')
     if not rectangle_height:
         rectangle_height = "30 mm"
+    sphere_radius = request.args.get('sphereRadius')
+    if not sphere_radius:
+        sphere_radius = "10 mm"
+    sphere_angle = request.args.get('sphereAngle')
+    if not sphere_angle:
+        sphere_angle = "180 deg"
+    sphere_revolute = request.args.get('sphereRevolute')
+    if not sphere_revolute:
+        sphere_revolute = "360 deg"
 
     # Generate Onshape URL and client for API calls
     fixed_url = '/api/partstudios/d/' + DID + '/w/' + WID + '/e/' + EID + '/features'
 
     get_response = get_request(fixed_url)
     parsed = get_response.data
-    # parsed = json.loads(get_response.data)
-
     val1 = val2 = val3 = name1 = name2 = name3 = ""
-    # new_feature = json.loads(get_response.data)["features"]
-    # val1 = new_feature[0]["message"]["constraints"][1]["message"]["parameters"][1]["message"]["expression"]
-    # name1 = new_feature[0]["message"]["name"]
-    # val2 = new_feature[1]["message"]["constraints"][11]["message"]["parameters"][3]["message"]["expression"]
-    # name2 = new_feature[1]["message"]["name"]
-    # val3 = new_feature[1]["message"]["constraints"][12]["message"]["parameters"][3]["message"]["expression"]
-    # name3 = new_feature[1]["message"]["name"]
 
     # Returns html webpage and make api calls using template 'Educate.html']
     return render_template('Educate.html', DID=DID, WID=WID, EID=EID, STEP=STEP, FEATURES=parsed,
                            NAME1=name1, VALUE1=val1, NAME2=name2, VALUE2=val2, NAME3=name3, VALUE3=val3,
                            CUBE=cube_length, CYLINDER1=cylinder_diameter, CYLINDER2=cylinder_extrude,
                            TABNAME=tab_name, NAME=name, RECTANGLE1=rectangle_width, RECTANGLE2=rectangle_length,
-                           RECTANGLE3=rectangle_height)
+                           RECTANGLE3=rectangle_height, SPHERE1=sphere_radius, SPHERE2=sphere_angle,
+                           SPHERE3=sphere_revolute)
 
 
 # -------------------------------------------------------------------------------------------#
@@ -1096,5 +1118,51 @@ def create_rectangle(width="20 mm", length="50 mm", height="30 mm"):
     json_object["feature"]["message"]["parameters"][2]["message"]["queries"][0]["message"]["featureId"] = fid
     json_object["feature"]["message"]["parameters"][4]["message"]["expression"] = height
     json_object["feature"]["message"]["name"] = "Extrude Rectangle " + height
+    payload = json_object
+    client.api_client.request(method, url=base + fixed_url, query_params=params, headers=headers, body=payload)
+
+
+def create_sphere(radius="10 mm", angle="180 deg", revolute="360 deg"):
+    global DID, WID, EID
+
+    with open('jsonCommands/CreateArc.json', 'r') as openfile:
+        json_object = json.load(openfile)  # Reading from json file
+    json_object["feature"]["message"]["constraints"][2]["message"]["parameters"][2]["message"]["expression"] = radius
+    json_object["feature"]["message"]["constraints"][4]["message"]["parameters"][2]["message"]["expression"] = angle
+    json_object["feature"]["message"]["name"] += " " + radius + " at " + angle
+
+    fixed_url = '/api/partstudios/d/' + DID + '/w/' + WID + '/e/' + EID + '/features'
+    method = 'POST'
+    params = {}
+    payload = json_object
+    headers = {'Accept': 'application/vnd.onshape.v1+json; charset=UTF-8;qs=0.1',
+               'Content-Type': 'application/json'}
+    response = client.api_client.request(method, url=base + fixed_url, query_params=params, headers=headers,
+                                         body=payload)
+
+    response = json.loads(response.data)
+    fid = response["feature"]["message"]["featureId"]
+
+    get_response = get_request(fixed_url)
+    response = json.loads(get_response.data)["features"]
+    revolute_line = False
+    for x in response:
+        if x["message"]["name"] == "Revolute Line":
+            revolute_line = True
+            break
+
+    if not revolute_line:
+        with open('jsonCommands/CreateRevoluteLine.json', 'r') as openfile:
+            json_object = json.load(openfile)  # Reading from json file
+        json_object["feature"]["message"]["parameters"][0]["message"]["queries"][0]["message"]["featureId"] = fid
+
+        payload = json_object
+        client.api_client.request(method, url=base + fixed_url, query_params=params, headers=headers, body=payload)
+
+    with open('jsonCommands/RevoluteSketch.json', 'r') as openfile:
+        json_object = json.load(openfile)  # Reading from json file
+    json_object["feature"]["message"]["parameters"][8]["message"]["expression"] = revolute
+    json_object["feature"]["message"]["parameters"][3]["message"]["queries"][0]["message"]["featureId"] = fid
+    json_object["feature"]["message"]["name"] += " " + revolute
     payload = json_object
     client.api_client.request(method, url=base + fixed_url, query_params=params, headers=headers, body=payload)
