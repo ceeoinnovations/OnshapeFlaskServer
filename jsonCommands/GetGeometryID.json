@@ -1,0 +1,4 @@
+{
+  "script":"function(context is Context, queries){return transientQueriesToStrings(evaluateQuery(context, qCreatedBy(makeId(\"Revolute Line\"), EntityType.EDGE)));}",
+  "queries": []
+}

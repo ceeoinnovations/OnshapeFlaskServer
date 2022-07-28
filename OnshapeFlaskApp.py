@@ -1159,6 +1159,16 @@ def create_sphere(radius="10 mm", angle="180 deg", revolute="360 deg"):
         payload = json_object
         client.api_client.request(method, url=base + fixed_url, query_params=params, headers=headers, body=payload)
 
+    # fixed_url2 = '/api/partstudios/d/' + DID + '/w/' + WID + '/e/' + EID + '/featurescript'
+    # with open('jsonCommands/GetGeometryID.json', 'r') as openfile:
+    #     json_object = json.load(openfile)  # Reading from json file
+    # payload = json_object
+    # response = client.api_client.request(method, url=base + fixed_url2, query_params=params, headers=headers,
+    #                                      body=payload)
+    # print()
+    # print(response.data)
+    # print()
+
     with open('jsonCommands/RevoluteSketch.json', 'r') as openfile:
         json_object = json.load(openfile)  # Reading from json file
     json_object["feature"]["message"]["parameters"][8]["message"]["expression"] = revolute
