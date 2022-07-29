@@ -1,4 +1,4 @@
 {
-  "script":"function(context is Context, queries){return transientQueriesToStrings(evaluateQuery(context, qCreatedBy(makeId(\"Revolute Line\"), EntityType.EDGE)));}",
+  "script":"function(context is Context, queries){return transientQueriesToStrings(evaluateQuery(context, qGeometry(qCreatedBy(makeId('Fd5TnWYq9UpUQe5_0'), EntityType.BODY),GeometryType.LINE)));}",
   "queries": []
 }
