@@ -1,12 +1,11 @@
 # Imports needed for multiple extensions and file structure as a whole
-import time
-
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory
 import json
 import numpy as np
 import os
 from os.path import exists
 import base64
+import string
 
 # Imports for Onshape API Calls
 from onshape_client.client import Client
@@ -23,14 +22,14 @@ from PIL import Image
 # ------------------ Defining Variables -----------------------------------------------------#
 # -------------------------------------------------------------------------------------------#
 plt.rcParams['figure.figsize'] = (4, 3)
-plt.rcParams['figure.autolayout'] = True 
+plt.rcParams['figure.autolayout'] = True
 app = Flask(__name__)
 
 app_key = ''
 secret_key = ''
 client = ''
 DID = ''
-WID = '' 
+WID = ''
 EID = ''
 STEP = 30
 partsDictionary = {}
@@ -47,7 +46,7 @@ base = 'https://rogers.onshape.com'  # Change if using an Enterprise account
 
 # Search and check if a file named "OnshapeAPIKey.py" exists in the folder. Then uses the API Keys found in the file
 for files in os.listdir('.'):
-    if "OnshapeAPIKey.py" in files: 
+    if "OnshapeAPIKey.py" in files:
         exec(open('OnshapeAPIKey.py').read())
         app_key = access
         secret_key = secret
@@ -549,36 +548,59 @@ def educate_set():
 
     fixed_url = '/api/partstudios/d/' + DID + '/w/' + WID + '/e/' + EID + '/features'
     get_response = get_request(fixed_url)
-
+    response = json.loads(get_response.data)["features"]
     fixed_url = fixed_url + '/featureid/fid'
-    fixed_url2 = fixed_url
-    fid = json.loads(get_response.data)["features"][0]["message"]["featureId"]
-    fid2 = json.loads(get_response.data)["features"][1]["message"]["featureId"]
-    fixed_url = fixed_url.replace('fid', fid)
-    fixed_url2 = fixed_url2.replace('fid', fid2)
-
-    new_feature = json.loads(get_response.data)["features"][0]
-    new_feature2 = json.loads(get_response.data)["features"][1]
-    new_feature["message"]["constraints"][1]["message"]["parameters"][1]["message"]["expression"] = \
-        request.args.get("value1")
-    new_feature2["message"]["constraints"][11]["message"]["parameters"][3]["message"]["expression"] = \
-        request.args.get("value2")
-    new_feature2["message"]["constraints"][12]["message"]["parameters"][3]["message"]["expression"] = \
-        request.args.get("value3")
-
     method = 'POST'
     params = {}
-    payload = {'feature': new_feature,
-               'serializationVersion': json.loads(get_response.data)["serializationVersion"],
-               'sourceMicroversion': json.loads(get_response.data)["sourceMicroversion"]}
-    payload2 = {'feature': new_feature2,
-                'serializationVersion': json.loads(get_response.data)["serializationVersion"],
-                'sourceMicroversion': json.loads(get_response.data)["sourceMicroversion"]}
     headers = {'Accept': 'application/vnd.onshape.v1+json; charset=UTF-8;qs=0.1',
                'Content-Type': 'application/json'}
 
-    client.api_client.request(method, url=base + fixed_url, query_params=params, headers=headers, body=payload)
-    client.api_client.request(method, url=base + fixed_url2, query_params=params, headers=headers, body=payload2)
+    for x in response:
+        changed = False
+        if x["message"]["featureType"] == "cube" and x["message"]["parameters"][0]["message"]["expression"] != \
+                request.args.get(x["message"]["name"] + " Length"):
+            x["message"]["parameters"][0]["message"]["expression"] = request.args.get(x["message"]["name"] + " Length")
+            changed = True
+        elif x["message"]["featureType"] == "newSketch":
+            name = x["message"]["name"]
+            count = 0
+            for y in x["message"]["constraints"]:
+                constraint_type = y["message"]["constraintType"]
+                if (constraint_type == "LENGTH" or constraint_type == "DIAMETER" or constraint_type == "DISTANCE"
+                        or constraint_type == "ANGLE"):
+                    for z in y["message"]["parameters"]:
+                        name2 = name + " " + string.capwords(constraint_type) + " " +  str(count)
+                        if (z["message"]["parameterId"] == "length" or z["message"]["parameterId"] == "angle") and \
+                                z["message"]["expression"] != request.args.get(name2):
+                            z["message"]["expression"] = request.args.get(name2)
+                            changed = True
+                            count += 1
+        elif x["message"]["featureType"] == "extrude":
+            for y in x["message"]["parameters"]:
+                if y["typeName"] == "BTMParameterQuantity":
+                    name2 = x["message"]["name"] + " Height"
+                    if y["message"]["expression"] == request.args.get(name2):
+                        break
+                    y["message"]["expression"] = request.args.get(name2)
+                    changed = True
+                    break
+        elif x["message"]["featureType"] == "revolve":
+            for y in x["message"]["parameters"]:
+                if y["typeName"] == "BTMParameterQuantity":
+                    name2 = x["message"]["name"] + " Revolution"
+                    if y["message"]["expression"] == request.args.get(name2):
+                        break
+                    y["message"]["expression"] = request.args.get(name2)
+                    changed = True
+                    break
+
+        if changed:
+            fid = x["message"]["featureId"]
+            fixed_url2 = fixed_url.replace('fid', fid)
+            payload = {'feature': x,
+                       'serializationVersion': json.loads(get_response.data)["serializationVersion"],
+                       'sourceMicroversion': json.loads(get_response.data)["sourceMicroversion"]}
+            client.api_client.request(method, url=base + fixed_url2, query_params=params, headers=headers, body=payload)
 
     # Returns html webpage and make api calls using template 'Jupyter.html'
     return educate("DimensionsTab", "Dimensions")
@@ -633,13 +655,15 @@ def educate(tab_name="", name=""):
     parsed = get_response.data
     val1 = val2 = val3 = name1 = name2 = name3 = ""
 
+    dimensions = get_dimensions()
+
     # Returns html webpage and make api calls using template 'Educate.html']
     return render_template('Educate.html', DID=DID, WID=WID, EID=EID, STEP=STEP, FEATURES=parsed,
                            NAME1=name1, VALUE1=val1, NAME2=name2, VALUE2=val2, NAME3=name3, VALUE3=val3,
                            CUBE=cube_length, CYLINDER1=cylinder_diameter, CYLINDER2=cylinder_extrude,
                            TABNAME=tab_name, NAME=name, RECTANGLE1=rectangle_width, RECTANGLE2=rectangle_length,
                            RECTANGLE3=rectangle_height, SPHERE1=sphere_radius, SPHERE2=sphere_angle,
-                           SPHERE3=sphere_revolute)
+                           SPHERE3=sphere_revolute, DIMENSIONS=dimensions)
 
 
 # -------------------------------------------------------------------------------------------#
@@ -676,10 +700,10 @@ def rotate_input(assembly, part_id: str, rotation: float, direction: int):
     for x in occurrences:
         if x['path'][0] == part_id:
             occurrence = x
-    if not occurrence: 
+    if not occurrence:
         print("Part not found!")
         return None
-    
+
     rot_mat = np.matmul(identity_matrix, clockwise_spin(rotation, direction))
     transform_mat = np.matmul(identity_matrix, rot_mat)
 
@@ -709,11 +733,11 @@ def get_assembly_definition():
 # This function parses through all the parts within the assembly and returns the x and y positions of the position
 # trackers specified with the partId.
 def get_position(assembly, part_id: str):
-    for occ in assembly['rootAssembly']['occurrences']: 
+    for occ in assembly['rootAssembly']['occurrences']:
         if occ['path'][0] == part_id:
             return occ['transform'][3], occ['transform'][7], occ['transform'][11]
-    print("Part not found!") 
-    return None 
+    print("Part not found!")
+    return None
 
 
 # This functions requests the assembly definition
@@ -1050,13 +1074,20 @@ def stepping_rotation(frames=60, rotation=360.0, zoom_start=0.001, zoom_end=0.00
 # -----------------------------------------------------#
 def create_cylinder(cylinder_diameter="50 mm", cylinder_extrude="25 mm"):
     global DID, WID, EID
+
+    fixed_url = '/api/partstudios/d/' + DID + '/w/' + WID + '/e/' + EID + '/features'
+    response = json.loads(get_request(fixed_url).data)["features"]
+    count = 0
+    for x in response:
+        if "Circle" in x["message"]["name"]:
+            count += 1
+
     with open('jsonCommands/CreateCircle.json', 'r') as openfile:
         json_object = json.load(openfile)  # Reading from json file
     json_object["feature"]["message"]["constraints"][1]["message"]["parameters"][1]["message"]["exoression"] = \
         cylinder_diameter
-    json_object["feature"]["message"]["name"] += " " + cylinder_diameter
+    json_object["feature"]["message"]["name"] += " " + str(count)
 
-    fixed_url = '/api/partstudios/d/' + DID + '/w/' + WID + '/e/' + EID + '/features'
     method = 'POST'
     params = {}
     payload = json_object
@@ -1071,7 +1102,7 @@ def create_cylinder(cylinder_diameter="50 mm", cylinder_extrude="25 mm"):
         json_object = json.load(openfile)  # Reading from json file
     json_object["feature"]["message"]["parameters"][2]["message"]["queries"][0]["message"]["featureId"] = fid
     json_object["feature"]["message"]["parameters"][4]["message"]["expression"] = cylinder_extrude
-    json_object["feature"]["message"]["name"] = "Extrude Circle " + cylinder_extrude
+    json_object["feature"]["message"]["name"] = "Extrude Circle " + str(count)
     payload = json_object
     client.api_client.request(method, url=base + fixed_url, query_params=params, headers=headers, body=payload)
 
@@ -1079,12 +1110,18 @@ def create_cylinder(cylinder_diameter="50 mm", cylinder_extrude="25 mm"):
 def create_cube(cube_length="30 mm"):
     global DID, WID, EID
 
+    fixed_url = '/api/partstudios/d/' + DID + '/w/' + WID + '/e/' + EID + '/features'
+    response = json.loads(get_request(fixed_url).data)["features"]
+    count = 0
+    for x in response:
+        if "Cube" in x["message"]["name"]:
+            count += 1
+
     with open('jsonCommands/CreateCube.json', 'r') as openfile:
         json_object = json.load(openfile)  # Reading from json file
     json_object["feature"]["message"]["parameters"][0]["message"]["expression"] = cube_length
-    json_object["feature"]["message"]["name"] += " " + cube_length
+    json_object["feature"]["message"]["name"] += " " + str(count)
 
-    fixed_url = '/api/partstudios/d/' + DID + '/w/' + WID + '/e/' + EID + '/features'
     method = 'POST'
     params = {}
     payload = json_object
@@ -1096,13 +1133,19 @@ def create_cube(cube_length="30 mm"):
 def create_rectangle(width="20 mm", length="50 mm", height="30 mm"):
     global DID, WID, EID
 
+    fixed_url = '/api/partstudios/d/' + DID + '/w/' + WID + '/e/' + EID + '/features'
+    response = json.loads(get_request(fixed_url).data)["features"]
+    count = 0
+    for x in response:
+        if "Rectangle" in x["message"]["name"]:
+            count += 1
+
     with open('jsonCommands/CreateRectangle.json', 'r') as openfile:
         json_object = json.load(openfile)  # Reading from json file
     json_object["feature"]["message"]["constraints"][11]["message"]["parameters"][3]["message"]["expression"] = width
     json_object["feature"]["message"]["constraints"][12]["message"]["parameters"][3]["message"]["expression"] = length
-    json_object["feature"]["message"]["name"] += " " + width + " by " + length
+    json_object["feature"]["message"]["name"] += " " + str(count)
 
-    fixed_url = '/api/partstudios/d/' + DID + '/w/' + WID + '/e/' + EID + '/features'
     method = 'POST'
     params = {}
     payload = json_object
@@ -1117,7 +1160,7 @@ def create_rectangle(width="20 mm", length="50 mm", height="30 mm"):
         json_object = json.load(openfile)  # Reading from json file
     json_object["feature"]["message"]["parameters"][2]["message"]["queries"][0]["message"]["featureId"] = fid
     json_object["feature"]["message"]["parameters"][4]["message"]["expression"] = height
-    json_object["feature"]["message"]["name"] = "Extrude Rectangle " + height
+    json_object["feature"]["message"]["name"] = "Extrude Rectangle " + str(count)
     payload = json_object
     client.api_client.request(method, url=base + fixed_url, query_params=params, headers=headers, body=payload)
 
@@ -1125,13 +1168,22 @@ def create_rectangle(width="20 mm", length="50 mm", height="30 mm"):
 def create_sphere(radius="10 mm", angle="180 deg", revolute="360 deg"):
     global DID, WID, EID
 
+    fixed_url = '/api/partstudios/d/' + DID + '/w/' + WID + '/e/' + EID + '/features'
+    response = json.loads(get_request(fixed_url).data)["features"]
+    revolute_line = False
+    count = 0
+    for x in response:
+        if x["message"]["name"] == "Revolute Line":
+            revolute_line = True
+        elif "Arc" in x["message"]["name"]:
+            count += 1
+
     with open('jsonCommands/CreateArc.json', 'r') as openfile:
         json_object = json.load(openfile)  # Reading from json file
     json_object["feature"]["message"]["constraints"][2]["message"]["parameters"][2]["message"]["expression"] = radius
     json_object["feature"]["message"]["constraints"][4]["message"]["parameters"][2]["message"]["expression"] = angle
-    json_object["feature"]["message"]["name"] += " " + radius + " at " + angle
+    json_object["feature"]["message"]["name"] += " " + str(count)
 
-    fixed_url = '/api/partstudios/d/' + DID + '/w/' + WID + '/e/' + EID + '/features'
     method = 'POST'
     params = {}
     payload = json_object
@@ -1143,14 +1195,6 @@ def create_sphere(radius="10 mm", angle="180 deg", revolute="360 deg"):
     response = json.loads(response.data)
     fid = response["feature"]["message"]["featureId"]
 
-    get_response = get_request(fixed_url)
-    response = json.loads(get_response.data)["features"]
-    revolute_line = False
-    for x in response:
-        if x["message"]["name"] == "Revolute Line":
-            revolute_line = True
-            break
-
     if not revolute_line:
         with open('jsonCommands/CreateRevoluteLine.json', 'r') as openfile:
             json_object = json.load(openfile)  # Reading from json file
@@ -1159,20 +1203,46 @@ def create_sphere(radius="10 mm", angle="180 deg", revolute="360 deg"):
         payload = json_object
         client.api_client.request(method, url=base + fixed_url, query_params=params, headers=headers, body=payload)
 
-    # fixed_url2 = '/api/partstudios/d/' + DID + '/w/' + WID + '/e/' + EID + '/featurescript'
-    # with open('jsonCommands/GetGeometryID.json', 'r') as openfile:
-    #     json_object = json.load(openfile)  # Reading from json file
-    # payload = json_object
-    # response = client.api_client.request(method, url=base + fixed_url2, query_params=params, headers=headers,
-    #                                      body=payload)
-    # print()
-    # print(response.data)
-    # print()
-
     with open('jsonCommands/RevoluteSketch.json', 'r') as openfile:
         json_object = json.load(openfile)  # Reading from json file
     json_object["feature"]["message"]["parameters"][8]["message"]["expression"] = revolute
     json_object["feature"]["message"]["parameters"][3]["message"]["queries"][0]["message"]["featureId"] = fid
-    json_object["feature"]["message"]["name"] += " " + revolute
+    json_object["feature"]["message"]["name"] += " " + str(count)
     payload = json_object
     client.api_client.request(method, url=base + fixed_url, query_params=params, headers=headers, body=payload)
+
+
+def get_dimensions():
+    fixed_url = '/api/partstudios/d/' + DID + '/w/' + WID + '/e/' + EID + '/features'
+    response = json.loads(get_request(fixed_url).data)["features"]
+    expressions = []
+    for x in response:
+        if x["message"]["featureType"] == "cube":
+            temp = [x["message"]["name"] + " Length", x["message"]["parameters"][0]["message"]["expression"]]
+            expressions.append(temp)
+        elif x["message"]["featureType"] == "newSketch":
+            name = x["message"]["name"]
+            count = 0
+            for y in x["message"]["constraints"]:
+                constraint_type = y["message"]["constraintType"]
+                if (constraint_type == "LENGTH" or constraint_type == "DIAMETER" or constraint_type == "DISTANCE"
+                        or constraint_type == "ANGLE"):
+                    for z in y["message"]["parameters"]:
+                        if z["message"]["parameterId"] == "length" or z["message"]["parameterId"] == "angle":
+                            name2 = name + " " + string.capwords(constraint_type) + " " + str(count)
+                            temp = [name2, z["message"]["expression"]]
+                            expressions.append(temp)
+                            count += 1
+        elif x["message"]["featureType"] == "extrude":
+            for y in x["message"]["parameters"]:
+                if y["typeName"] == "BTMParameterQuantity":
+                    temp = [x["message"]["name"] + " Height", y["message"]["expression"]]
+                    expressions.append(temp)
+                    break
+        elif x["message"]["featureType"] == "revolve":
+            for y in x["message"]["parameters"]:
+                if y["typeName"] == "BTMParameterQuantity":
+                    temp = [x["message"]["name"] + " Revolution", y["message"]["expression"]]
+                    expressions.append(temp)
+                    break
+    return expressions
