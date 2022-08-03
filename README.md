@@ -21,10 +21,12 @@ This project started using Onshape's [_Heat Sink Design Project_](https://github
 as a base along with Onshape's [_Four Bar Mechanism Design Project_](https://github.com/PTC-Education/Four-Bar-Mechanism) 
 as inspiration for the "_CEEO Rotate & Graph_" extension.
 
-This project contains three separate tools:
+This project contains five separate tools:
 - CEEO Rotate & Graph
 - CEEO Image Maker
 - CEEO GIF Maker
+- CEEO Educate
+- CEEO Juypter
 
 ---
 ## How To Run:
@@ -199,6 +201,27 @@ decrease time it takes to create a GIF.
 Example Screen Recording: <br> ![](./examples/GifMaker.gif)
 
 The Produced GIF: <br> ![](./examples/LogoGIF.gif)
+
+<br>
+
+#### - CEEO Educate:
+**_In the process of documenting, coming soon over the next week!_**<br><br>
+This is a tool for Onshape's **Part Studio**. This tool allows the user to create and edit sketches, extrudes,
+revolutions, or as Onshape calls them, **features**. The goal of this tool is help those who are new to CAD learn how
+to CAD by giving them features to start that they can then edit themselves. This tool does this in two ways, the first
+being that it allows users to create a variety of basic shapes from scratch that they can edit the dimensions of when
+creating them. The second way is letting them edit the dimensions of any features in the document the tool can detect.
+This is even useful to CAD experts as it creates a single place where all the dimensions in a document can be edited!
+Sadly this does run into some bugs when stressed tested with huge amounts of data such as complicated parts with
+multiple dimensions. Most of the bugs have been fixed, but it is still possible that due to the way features are
+connected in Onshape that by editing one dimension other dimensions get misaligned or edited themselves. Also, due to 
+the inability to get geometryIDs from sketches, the revolute line used to create spheres must always be created first
+for the sphere feature to work.
+
+<br>
+
+#### - CEEO Juypter:
+**_In the process of documenting, coming soon over the next week!_**<br><br>
 
 ---
 This project created by the Tufts Center for Engineering Education and Outreach (CEEO).
