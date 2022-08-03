@@ -379,9 +379,9 @@ def jupyter():
 
 
 # ----------------------------#
-# ----CEEO Educate------------#
+# ----CEEO Create & Edit------#
 # ----------------------------#
-@app.route('/educateCreateSphere')
+@app.route('/createSphere')
 def educate_create_sphere():
     global EID, WID, DID
 
@@ -402,7 +402,7 @@ def educate_create_sphere():
     return educate("PartsTab", "Parts")
 
 
-@app.route('/educateCreateRectangle')
+@app.route('/createRectangle')
 def educate_create_rectangle():
     global EID, WID, DID
 
@@ -423,7 +423,7 @@ def educate_create_rectangle():
     return educate("PartsTab", "Parts")
 
 
-@app.route('/educateCreateCube')
+@app.route('/createCube')
 def educate_create_cube():
     global EID, WID, DID
 
@@ -442,7 +442,7 @@ def educate_create_cube():
     return educate("PartsTab", "Parts")
 
 
-@app.route('/educateCreateCylinder')
+@app.route('/createCylinder')
 def educate_create_cylinder():
     global EID, WID, DID
 
@@ -462,78 +462,7 @@ def educate_create_cylinder():
 
 
 # Reset page for part assembly, CEEO Educate
-@app.route('/educateCreate')
-def educate_create():
-    global EID, WID, DID, client
-
-    did = request.args.get('documentId')
-    wid = request.args.get('workspaceId')
-    eid = request.args.get('elementId')
-
-    if did or wid or eid:
-        DID = did
-        WID = wid
-        EID = eid
-
-    fixed_url = '/api/partstudios/d/' + DID + '/w/' + WID + '/e/' + EID + '/features'
-    get_response = get_request(fixed_url)
-
-    # CREATE NEW SKETCH
-    new_feature = json.loads(get_response.data)["features"][0]
-    new_feature["message"]["constraints"][1]["message"]["parameters"][1]["message"]["expression"] = '12 in'
-    new_feature["message"]["name"] = "Circle 2"
-    new_feature["message"]["featureId"] = ""
-
-    method = 'POST'
-    params = {}
-    payload = {'feature': new_feature,
-               'serializationVersion': json.loads(get_response.data)["serializationVersion"],
-               'sourceMicroversion': json.loads(get_response.data)["sourceMicroversion"]}
-    headers = {'Accept': 'application/vnd.onshape.v1+json; charset=UTF-8;qs=0.1',
-               'Content-Type': 'application/json'}
-
-    client.api_client.request(method, url=base + fixed_url, query_params=params, headers=headers, body=payload)
-
-    # CREATE NEW SKETCH
-    new_feature = json.loads(get_response.data)["features"][2]
-    new_feature["message"]["parameters"][3]["message"]["queries"][0]["message"]["geometryIds"].clear()
-    new_feature["message"]["parameters"][8]["message"]["expression"] = '180 deg'
-    new_feature["message"]["name"] = "Revolve 2"
-    new_feature["message"]["featureId"] = ""
-
-    method = 'POST'
-    params = {}
-    payload = {'feature': new_feature,
-               'serializationVersion': json.loads(get_response.data)["serializationVersion"],
-               'sourceMicroversion': json.loads(get_response.data)["sourceMicroversion"]}
-    headers = {'Accept': 'application/vnd.onshape.v1+json; charset=UTF-8;qs=0.1',
-               'Content-Type': 'application/json'}
-
-    client.api_client.request(method, url=base + fixed_url, query_params=params, headers=headers, body=payload)
-
-    get_response = get_request(fixed_url)
-    fixed_url = fixed_url + '/featureid/fid'
-    fid = json.loads(get_response.data)["features"][5]["message"]["featureId"]
-    fixed_url = fixed_url.replace('fid', fid)
-
-    new_feature = json.loads(get_response.data)["features"][5]
-    new_feature["message"]["parameters"][3]["message"]["queries"][0]["message"]["geometryIds"].append('JNC')
-
-    method = 'POST'
-    params = {}
-    payload = {'feature': new_feature,
-               'serializationVersion': json.loads(get_response.data)["serializationVersion"],
-               'sourceMicroversion': json.loads(get_response.data)["sourceMicroversion"]}
-    headers = {'Accept': 'application/vnd.onshape.v1+json; charset=UTF-8;qs=0.1',
-               'Content-Type': 'application/json'}
-
-    client.api_client.request(method, url=base + fixed_url, query_params=params, headers=headers, body=payload)
-    # Returns html webpage and make api calls using template 'Jupyter.html'
-    return educate()
-
-
-# Reset page for part assembly, CEEO Educate
-@app.route('/educateSet')
+@app.route('/educateEdit')
 def educate_set():
     global EID, WID, DID, client
 
@@ -657,8 +586,8 @@ def educate(tab_name="", name=""):
 
     dimensions = get_dimensions()
 
-    # Returns html webpage and make api calls using template 'Educate.html']
-    return render_template('Educate.html', DID=DID, WID=WID, EID=EID, STEP=STEP, FEATURES=parsed,
+    # Returns html webpage and make api calls using template 'CreateAndEdit.html']
+    return render_template('CreateAndEdit.html', DID=DID, WID=WID, EID=EID, STEP=STEP, FEATURES=parsed,
                            NAME1=name1, VALUE1=val1, NAME2=name2, VALUE2=val2, NAME3=name3, VALUE3=val3,
                            CUBE=cube_length, CYLINDER1=cylinder_diameter, CYLINDER2=cylinder_extrude,
                            TABNAME=tab_name, NAME=name, RECTANGLE1=rectangle_width, RECTANGLE2=rectangle_length,

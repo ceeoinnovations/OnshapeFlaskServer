@@ -11,7 +11,7 @@
 
 
 
-    <h3 style="text-align:left; color:#000000;" class="inline"> Create Parts and Learn CAD </h3><br><br>
+    <h3 style="text-align:left; color:#000000;" class="inline"> Create and Edit </h3><br><br>
     <!-- Tab links -->
     <div class="tab" style="width:423px">
         <button class="tablinks" id="DimensionsTab" onclick="openTab('DimensionsTab', 'Dimensions')">
@@ -22,7 +22,7 @@
 
     <!-- Tab content -->
     <div id="Dimensions" class="tabcontent">
-        <form action="/educateSet">
+        <form action="/educateEdit">
             <span onclick="closeTab()" class="topright">&times</span>
             {% for para1, para2 in DIMENSIONS %}
             <label for="{{para1}}">{{para1}}:</label>
@@ -36,7 +36,7 @@
 
     <div id="Parts" class="tabcontent">
         <span onclick="closeTab()" class="topright">&times</span>
-        <form action="/educateCreateCube">
+        <form action="/createCube">
 
             <div class="form__group">
                 <input type="text" id="cubeLength" class="form__field" name="cubeLength" value="{{CUBE}}">
@@ -47,7 +47,7 @@
             <div class="loader-container" style="width:140.5px"><div class="loader"></div></div>
         </form>
 
-        <br><form action="/educateCreateCylinder">
+        <br><form action="/createCylinder">
             <div class="form__group">
                 <input type="text" id="cylinderDiameter" class="form__field" name="cylinderDiameter"
                        value="{{CYLINDER1}}">
@@ -63,7 +63,7 @@
             <div class="loader-container" style="width:160.5px"><div class="loader"></div></div>
         </form>
 
-        <br><form action="/educateCreateRectangle">
+        <br><form action="/createRectangle">
             <div class="form__group">
                 <input type="text" id="rectangleWidth" class="form__field" name="rectangleWidth"
                        value="{{RECTANGLE1}}">
@@ -84,7 +84,7 @@
             <div class="loader-container" style="width:160.5px"><div class="loader"></div></div>
         </form>
 
-        <br><form action="/educateCreateSphere">
+        <br><form action="/createSphere">
             <div class="form__group">
                 <input type="text" id="sphereRadius" class="form__field" name="sphereRadius"
                        value="{{SPHERE1}}">
@@ -105,10 +105,6 @@
             <div class="loader-container" style="width:160.5px"><div class="loader"></div></div>
         </form>
 
-<!--        <br><form action="/educateCreate">-->
-<!--            <div><input type="submit" value="Create Hemisphere" class="hover button submit" onclick="showLoader()"></div>-->
-<!--            <div class="loader-container"><div class="loader"></div></div>-->
-<!--        </form>-->
     </div>
 
     <div id="Features" class="tabcontent">

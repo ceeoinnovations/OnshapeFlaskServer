@@ -73,8 +73,30 @@ certificate of your computer system._"
    2. CMD: `set FLASK_APP=OnshapeFlaskApp.py & set FLASK_ENV=development & set FLASK_RUN_PORT=5687 & flask run --cert=cert.pem --key=key.pem`
    3. Bash: `export FLASK_APP=OnshapeFlaskApp.py ; export FLASK_ENV=development ; export FLASK_RUN_PORT=5687 ; flask run --cert=cert.pem --key=key.pem`
    4. Fish Shell: `set -x FLASK_APP OnshapeFlaskApp.py ; set -x FLASK_ENV development ; set -x FLASK_RUN_PORT 5687 ; flask run --cert=cert.pem --key=key.pem`
-9. Sometimes the website will be blocked by your web browser. Open https://127.0.0.1:5687 in a new tab and allow it.
-
+<br><br>
+9. **_DEBUGGING:_** Sometimes the website will be blocked by your web browser. Open https://127.0.0.1:5687 in a new tab
+and allow it.
+10. **_DEBUGGING:_** Sometimes these commands also won't work fully if run in the same line as shown above, if that is
+the case you can run each line separately as long as the final line is run last. Here are the separate lines below:
+    1. Powershell:
+       1. `$env:FLASK_APP = "OnshapeFlaskApp.py"`
+       2. `$env:FLASK_ENV= "development"`
+       3. `$env:FLASK_RUN_PORT = 5687`
+    2. CMD:
+       1. `set FLASK_APP=OnshapeFlaskApp.py`
+       2. `set FLASK_ENV=development`
+       3. `set FLASK_RUN_PORT=5687`
+    3. Bash:
+       1. `export FLASK_APP=OnshapeFlaskApp.py`
+       2. `export FLASK_ENV=development`
+       3. `export FLASK_RUN_PORT=5687`
+    4. Fish Shell:
+       1. `set -x FLASK_APP OnshapeFlaskApp.py`
+       2. `set -x FLASK_ENV development`
+       3. `set -x FLASK_RUN_PORT 5687`
+    5. **Final line:** `flask run --cert=cert.pem --key=key.pem`
+11. Extra setup is needed for JupyterLite to get the _CEEO Jupyter_ tool to work, please read the description of the
+tool given below to learn more. Setup is very simple, just not needed for other tools.
 <br>
 
 That is it! Feel free to edit the flask app and learn how it works through the left behind commits. Theoretically any
@@ -87,7 +109,7 @@ calls through PTC's [API playground](https://github.com/PTC-Education/PTC-API-Pl
 ### Making Your Own Onshape App
 1. To set up your own Onshape app through OAuth, follow the instructions provided by PTC's Onshape integration guides
 [4.1. Onshape integration through OAuth](https://github.com/PTC-Education/Onshape-Integration-Guides/blob/main/Flask_Intro.md#41-onshape-integration-through-oauth).
-2. Afterwards, to run the three tools shown here, you need to add three extensions to your app.
+2. Afterwards, to run the five tools shown here, you need to add five extensions to your app.
    1. First to add extensions:
       1. Go to "_OAuth applications_" in the Onshape [Developer Portal](https://dev-portal.onshape.com/)
       2. Select your app
@@ -100,6 +122,10 @@ calls through PTC's [API playground](https://github.com/PTC-Education/PTC-API-Pl
       url of `https://127.0.0.1:5687/home2?documentId={$documentId}&workspaceId={$workspaceId}&elementId={$elementId}`
       3. **CEEO GIF Maker**: In location `Element right panel` with context of a `Selected assembly` and an action url
       of `https://127.0.0.1:5687/home3?documentId={$documentId}&workspaceId={$workspaceId}&elementId={$elementId}`
+      4. **CEEO Create & Edit**: In location `Element right panel` with context of a `Selected part studio` and an action url
+      of `https://127.0.0.1:5687/educate?documentId={$documentId}&workspaceId={$workspaceId}&elementId={$elementId}`
+      5. **CEEO Juypter**: Any location or context can be used, it only needs an action url
+      of `https://127.0.0.1:5687/jupyter?documentId={$documentId}&workspaceId={$workspaceId}&elementId={$elementId}`
 
 The rest you can edit as you see fit.
 
@@ -204,7 +230,7 @@ The Produced GIF: <br> ![](./examples/LogoGIF.gif)
 
 <br>
 
-#### - CEEO Educate:
+#### - CEEO Create & Edit:
 **_In the process of documenting, coming soon over the next week!_**<br><br>
 This is a tool for Onshape's **Part Studio**. This tool allows the user to create and edit sketches, extrudes,
 revolutions, or as Onshape calls them, **features**. The goal of this tool is help those who are new to CAD learn how
