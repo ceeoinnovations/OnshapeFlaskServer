@@ -24,14 +24,10 @@
     <div id="Dimensions" class="tabcontent">
         <form action="/educateSet">
             <span onclick="closeTab()" class="topright">&times</span>
-            <label for="value1">{{NAME1}}:</label>
-            <input type="text" id="value1" name="value1" value="{{VALUE1}}" class="dimensionInput"><br><br>
-
-            <label for="value2">{{NAME2}}:</label>
-            <input type="text" id="value2" name="value2" value="{{VALUE2}}" class="dimensionInput"><br><br>
-
-            <label for="value3">{{NAME3}}:</label>
-            <input type="text" id="value3" name="value3" value="{{VALUE3}}" class="dimensionInput"><br><br>
+            {% for para1, para2 in DIMENSIONS %}
+            <label for="{{para1}}">{{para1}}:</label>
+            <input type="text" id="{{para1}}" name="{{para1}}" value="{{para2}}" class="form__field"><br><br>
+            {% endfor %}
 
             <input type="submit" value="Submit" class="hover button submit" onclick="showLoader()">
             <div class="loader-container"><div class="loader"></div></div>

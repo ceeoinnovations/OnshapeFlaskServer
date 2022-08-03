@@ -1,0 +1,61 @@
+{
+  "content": [
+    {
+      "content": null,
+      "created": "2022-08-02T20:12:50.210416Z",
+      "format": null,
+      "last_modified": "2022-08-02T20:11:26.157123Z",
+      "mimetype": null,
+      "name": "Lorenz.ipynb",
+      "path": "Lorenz.ipynb",
+      "size": 6642,
+      "type": "notebook",
+      "writable": true
+    },
+    {
+      "content": null,
+      "created": "2022-08-02T20:12:50.210416Z",
+      "format": null,
+      "last_modified": "2022-08-02T20:11:26.157123Z",
+      "mimetype": null,
+      "name": "Intro.ipynb",
+      "path": "Intro.ipynb",
+      "size": 80006,
+      "type": "notebook",
+      "writable": true
+    },
+    {
+      "content": null,
+      "created": "2022-08-02T20:12:50.210416Z",
+      "format": null,
+      "last_modified": "2022-08-02T20:11:26.157123Z",
+      "mimetype": null,
+      "name": "sqlite.ipynb",
+      "path": "sqlite.ipynb",
+      "size": 24512,
+      "type": "notebook",
+      "writable": true
+    },
+    {
+      "content": null,
+      "created": "2022-08-02T20:12:50.210416Z",
+      "format": null,
+      "last_modified": "2022-08-02T20:12:45.746338Z",
+      "mimetype": "text/markdown",
+      "name": "README.md",
+      "path": "README.md",
+      "size": 941,
+      "type": "file",
+      "writable": true
+    }
+  ],
+  "created": "2022-08-02T20:12:50.210416Z",
+  "format": "json",
+  "last_modified": "2022-08-02T20:12:50.210416Z",
+  "mimetype": null,
+  "name": "",
+  "path": "",
+  "size": null,
+  "type": "directory",
+  "writable": true
+}
