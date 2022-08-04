@@ -25,21 +25,12 @@ plt.rcParams['figure.figsize'] = (4, 3)
 plt.rcParams['figure.autolayout'] = True
 app = Flask(__name__)
 
-app_key = ''
-secret_key = ''
 client = ''
 DID = ''
 WID = ''
 EID = ''
-STEP = 30
 partsDictionary = {}
 viewsDictionary = {}
-selected1 = "Input <1>"
-selected2 = "Position Tracker <1>"
-selected3 = "Position Tracker <2>"
-
-response1 = ""
-response2 = ""
 
 base = 'https://rogers.onshape.com'  # Change if using an Enterprise account
 # base = 'https://cad.onshape.com'  # This is the default Enterprise
@@ -78,10 +69,10 @@ def static_dir(path):
 # Home page for part assembly, CEEO Rotate & Graph extension
 @app.route('/home')
 def login():
-    global EID, WID, DID, STEP, partsDictionary, selected1, selected2, selected3
+    global EID, WID, DID
 
     # Defines default values
-    STEP = 30
+    step = 30
     direction = 1  # 1=Z, 2=X, 3=ZX, 4=Y, 5=YZ, 6=XY, 7=XYZ
     selected1 = "Input <1>"
     selected2 = "Position Tracker <1>"
@@ -97,7 +88,7 @@ def login():
         EID = eid
 
     # Returns html webpage and make api calls using template 'RotateAndGraph.html'
-    return render_template('RotateAndGraph.html', DID=DID, WID=WID, EID=EID, STEP=STEP, condition1=False,
+    return render_template('RotateAndGraph.html', DID=DID, WID=WID, EID=EID, STEP=step, condition1=False,
                            return1=list_parts_assembly().split('\n'), return2=list(partsDictionary.keys()),
                            return2_len=len(partsDictionary.keys()), selected1=selected1, selected2=selected2,
                            selected3=selected3, DIRECTION=direction)
@@ -107,7 +98,7 @@ def login():
 # sends them to the graph function to make and return a graph
 @app.route('/graph')
 def graph():
-    global EID, WID, DID, app_key, secret_key, STEP, partsDictionary, selected1, selected2, selected3
+    global EID, WID, DID
 
     did = request.args.get('documentId')
     wid = request.args.get('workspaceId')
@@ -120,7 +111,7 @@ def graph():
         EID = eid
 
     # Receive inputs from User
-    STEP = int(request.args.get('step'))   # Step value for rotation amount
+    step = int(request.args.get('step'))   # Step value for rotation amount
     selected1 = request.args.get('rotate_part')   # What part to rotate
     selected2 = request.args.get('input_track')   # What part to track and graph as input
     selected3 = request.args.get('output_track')   # What part to track and graph as output
@@ -152,7 +143,7 @@ def graph():
     elif direction == 0:
         # If direction is 0, set rotation to 0
         total = 0
-    rotation_step = total / STEP  # in radian
+    rotation_step = total / step  # in radian
 
     # Check for initial positions and assembly info
     assembly_info = get_assembly_definition()
@@ -167,7 +158,7 @@ def graph():
         print(in_pos)
         input_z_pos.append(in_pos[2])
         output_z_pos.append(out_pos[2])
-        for i in range(STEP):
+        for i in range(step):
             # Rotate the input by rotation_step
             rotate_input(assembly_info, move_id, rotation_step, direction)
             # Get the x-y position of the input and output position trackers
@@ -180,7 +171,7 @@ def graph():
             output_y_pos.append(out_pos[1])
             input_z_pos.append(in_pos[2])
             output_z_pos.append(out_pos[2])
-        print(total - rotation_step * STEP)
+        print(total - rotation_step * step)
 
     # Plot the path of the input and output positions data
     fig = plt.figure()
@@ -205,7 +196,7 @@ def graph():
     output = io.BytesIO()
     FigureCanvasAgg(fig).print_png(output)
     return render_template('RotateAndGraph.html', image1=base64.b64encode(output.getvalue()).decode("utf-8"),
-                           DID=DID, WID=WID, EID=EID, STEP=STEP, return1=list_parts_assembly().split('\n'),
+                           DID=DID, WID=WID, EID=EID, STEP=step, return1=list_parts_assembly().split('\n'),
                            return2=list(partsDictionary.keys()), return2_len=len(partsDictionary.keys()),
                            selected1=selected1, selected2=selected2, selected3=selected3, condition1=True,
                            DIRECTION=direction)
@@ -217,7 +208,7 @@ def graph():
 # Home page for part studio image maker extension
 @app.route('/home2')
 def login2():
-    global EID, WID, DID, app_key, secret_key
+    global EID, WID, DID
 
     # Request user input (view). If nothing is returned set view to Isometric
     view = request.args.get('view_matrix')
@@ -292,7 +283,7 @@ def login3():
 # GIF page for CEEO GIF Maker, assembly extension. Called after user inputs values to return a GIF.
 @app.route('/gif')
 def gif():
-    global EID, WID, DID, app_key, secret_key, partsDictionary
+    global EID, WID, DID
 
     # Request Onshape IDs
     did = request.args.get('documentId')
@@ -375,7 +366,7 @@ def jupyter():
         EID = eid
 
     # Returns html webpage and make api calls using template 'Jupyter.html'
-    return render_template('Jupyter.html', DID=DID, WID=WID, EID=EID, STEP=STEP)
+    return render_template('Jupyter.html', DID=DID, WID=WID, EID=EID)
 
 
 # ----------------------------#
@@ -464,7 +455,7 @@ def educate_create_cylinder():
 # Reset page for part assembly, CEEO Educate
 @app.route('/educateEdit')
 def educate_set():
-    global EID, WID, DID, client
+    global EID, WID, DID
 
     did = request.args.get('documentId')
     wid = request.args.get('workspaceId')
@@ -498,7 +489,7 @@ def educate_set():
                 if (constraint_type == "LENGTH" or constraint_type == "DIAMETER" or constraint_type == "DISTANCE"
                         or constraint_type == "ANGLE"):
                     for z in y["message"]["parameters"]:
-                        name2 = name + " " + string.capwords(constraint_type) + " " +  str(count)
+                        name2 = name + " " + string.capwords(constraint_type) + " " + str(count)
                         if (z["message"]["parameterId"] == "length" or z["message"]["parameterId"] == "angle") and \
                                 z["message"]["expression"] != request.args.get(name2):
                             z["message"]["expression"] = request.args.get(name2)
@@ -587,7 +578,7 @@ def educate(tab_name="", name=""):
     dimensions = get_dimensions()
 
     # Returns html webpage and make api calls using template 'CreateAndEdit.html']
-    return render_template('CreateAndEdit.html', DID=DID, WID=WID, EID=EID, STEP=STEP, FEATURES=parsed,
+    return render_template('CreateAndEdit.html', DID=DID, WID=WID, EID=EID, FEATURES=parsed,
                            NAME1=name1, VALUE1=val1, NAME2=name2, VALUE2=val2, NAME3=name3, VALUE3=val3,
                            CUBE=cube_length, CYLINDER1=cylinder_diameter, CYLINDER2=cylinder_extrude,
                            TABNAME=tab_name, NAME=name, RECTANGLE1=rectangle_width, RECTANGLE2=rectangle_length,
@@ -599,7 +590,6 @@ def educate(tab_name="", name=""):
 # ------------------ Helper Functions -------------------------------------------------------#
 # -------------------------------------------------------------------------------------------#
 def get_request(fixed_url, params=None, payload=None, charset=' charset=UTF-8;qs=0.1'):
-    global client
     method = 'GET'
     if params is None:
         params = {}
@@ -611,7 +601,6 @@ def get_request(fixed_url, params=None, payload=None, charset=' charset=UTF-8;qs
 
 
 def fix_url(url):
-    global DID, WID, EID
     url = url.replace('did', DID)
     url = url.replace('wid', WID)
     url = url.replace('eid', EID)
@@ -621,8 +610,6 @@ def fix_url(url):
 # This function rotates the input link of the mechanism with a fixed rotation step in degree; changes are
 # made to the actual model, credit to: Felix Deng @ https://github.com/PTC-Education/Four-Bar-Mechanism
 def rotate_input(assembly, part_id: str, rotation: float, direction: int):
-    global client
-
     identity_matrix = np.reshape([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1], (4, 4))
     occurrences = assembly['rootAssembly']['occurrences']
     occurrence = None
@@ -925,8 +912,6 @@ def get_views():
 def stepping_rotation(frames=60, rotation=360.0, zoom_start=0.001, zoom_end=0.001,
                       start_view="Isometric", loop=True, zoom3=False, zoom_mid=0.002, direction=4,
                       name="OnshapeGIF", duration=0, edges=False, height=600, width=1000):
-    global viewsDictionary
-
     if direction >= 7:
         # If direction is all three directions, due to geometry need to decide rotation by root 3
         rotation = rotation / np.sqrt(3)
@@ -1002,8 +987,6 @@ def stepping_rotation(frames=60, rotation=360.0, zoom_start=0.001, zoom_end=0.00
 # ------------ Educate JSON Functions -----------------#
 # -----------------------------------------------------#
 def create_cylinder(cylinder_diameter="50 mm", cylinder_extrude="25 mm"):
-    global DID, WID, EID
-
     fixed_url = '/api/partstudios/d/' + DID + '/w/' + WID + '/e/' + EID + '/features'
     response = json.loads(get_request(fixed_url).data)["features"]
     count = 0
@@ -1013,7 +996,7 @@ def create_cylinder(cylinder_diameter="50 mm", cylinder_extrude="25 mm"):
 
     with open('jsonCommands/CreateCircle.json', 'r') as openfile:
         json_object = json.load(openfile)  # Reading from json file
-    json_object["feature"]["message"]["constraints"][1]["message"]["parameters"][1]["message"]["exoression"] = \
+    json_object["feature"]["message"]["constraints"][1]["message"]["parameters"][1]["message"]["expression"] = \
         cylinder_diameter
     json_object["feature"]["message"]["name"] += " " + str(count)
 
@@ -1037,8 +1020,6 @@ def create_cylinder(cylinder_diameter="50 mm", cylinder_extrude="25 mm"):
 
 
 def create_cube(cube_length="30 mm"):
-    global DID, WID, EID
-
     fixed_url = '/api/partstudios/d/' + DID + '/w/' + WID + '/e/' + EID + '/features'
     response = json.loads(get_request(fixed_url).data)["features"]
     count = 0
@@ -1060,8 +1041,6 @@ def create_cube(cube_length="30 mm"):
 
 
 def create_rectangle(width="20 mm", length="50 mm", height="30 mm"):
-    global DID, WID, EID
-
     fixed_url = '/api/partstudios/d/' + DID + '/w/' + WID + '/e/' + EID + '/features'
     response = json.loads(get_request(fixed_url).data)["features"]
     count = 0
@@ -1095,8 +1074,6 @@ def create_rectangle(width="20 mm", length="50 mm", height="30 mm"):
 
 
 def create_sphere(radius="10 mm", angle="180 deg", revolute="360 deg"):
-    global DID, WID, EID
-
     fixed_url = '/api/partstudios/d/' + DID + '/w/' + WID + '/e/' + EID + '/features'
     response = json.loads(get_request(fixed_url).data)["features"]
     revolute_line = False
