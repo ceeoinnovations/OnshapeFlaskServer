@@ -25,8 +25,8 @@ This project contains five separate tools:
 - CEEO Rotate & Graph
 - CEEO Image Maker
 - CEEO GIF Maker
-- CEEO Educate
-- CEEO Juypter
+- CEEO Create & Edit
+- CEEO Jupyter
 
 ---
 ## How To Run:
@@ -124,7 +124,7 @@ calls through PTC's [API playground](https://github.com/PTC-Education/PTC-API-Pl
       of `https://127.0.0.1:5687/home3?documentId={$documentId}&workspaceId={$workspaceId}&elementId={$elementId}`
       4. **CEEO Create & Edit**: In location `Element right panel` with context of a `Selected part studio` and an action url
       of `https://127.0.0.1:5687/educate?documentId={$documentId}&workspaceId={$workspaceId}&elementId={$elementId}`
-      5. **CEEO Juypter**: Any location or context can be used, it only needs an action url
+      5. **CEEO Jupyter**: Any location or context can be used, it only needs an action url
       of `https://127.0.0.1:5687/jupyter?documentId={$documentId}&workspaceId={$workspaceId}&elementId={$elementId}`
 
 The rest you can edit as you see fit.
@@ -135,7 +135,7 @@ Instructions of the different tools this project creates and how to use them.
 
 <br>
 
-#### - CEEO Rotate & Graph:
+#### - CEEO Rotate & Graph: ![](./examples/arrow-clockwise.svg)
 This is a tool for Onshape's **Assembly**. It rotates any given part around the Z-Axis, centered at the origin. (Updates
 including other directions are planned but not yet implemented). It always rotates the parts a full 360 degrees, but the
 number of steps it takes to complete that rotation can be edited (default 6). When the part is being rotates, two part
@@ -151,7 +151,7 @@ The Produced Result: <br> ![](./examples/Graph.jfif)
 
 <br>
 
-#### - CEEO Image Maker:
+#### - CEEO Image Maker: ![](./examples/card-image.svg)
 This is a tool for Onshape's **Part Studio**. It generates images of a shaded view of the part studio. It only has
 options for 8 different views at the moment, but more can be added through the code easily. The eight options are the 6
 normal directions (Top, Front, Left, etc.) along with Isometric (same isometric as in Onshape) and Flipped Isometric, a
@@ -163,7 +163,7 @@ Example Image: <br> ![](./examples/ExampleImage.jfif)
 
 <br>
 
-#### - CEEO GIF Maker:
+#### - CEEO GIF Maker: ![](./examples/filetype-gif.svg)
 This is a tool for Onshape's **Assembly**. This function creates a GIF. Its main purpose is to create a GIF where the 
 camera rotates around the object to give the object the effect that it is spinning. It also has the options to zoom in
 and out throughout the GIF by setting the zoom start/mid/end. This tool is multipurpose and changing the various 
@@ -171,7 +171,7 @@ settings can have widely different results. Can generate JPGs as well if frames 
 easiest way to slow down the GIF while keeping it smooth, but duration of each frame also works. Progress is displayed
 in the terminal where the Flask app is, but sadly not on the webpage. The example below skipped about 30-60 seconds of
 loading the GIF. This tool does not move the pieces in real time like Rotate & Graph as all work is behind the scenes
-by just doing what was done in the Image Maker, multiple times. GIFs are saved at `static/images`.
+by just doing what was done in the Image Maker, multiple times. GIFs are saved at `static/images/`.
 
 ##### GIF Settings:
 
@@ -230,8 +230,7 @@ The Produced GIF: <br> ![](./examples/LogoGIF.gif)
 
 <br>
 
-#### - CEEO Create & Edit:
-**_In the process of documenting, coming soon over the next week!_**<br><br>
+#### - CEEO Create & Edit: ![](./examples/tools.svg)
 This is a tool for Onshape's **Part Studio**. This tool allows the user to create and edit sketches, extrudes,
 revolutions, or as Onshape calls them, **features**. The goal of this tool is help those who are new to CAD learn how
 to CAD by giving them features to start that they can then edit themselves. This tool does this in two ways, the first
@@ -244,9 +243,27 @@ connected in Onshape that by editing one dimension other dimensions get misalign
 the inability to get geometryIDs from sketches, the revolute line used to create spheres must always be created first
 for the sphere feature to work.
 
+##### Creating Features:
+At the moment there are four different shapes that can be created, cubes, cylinders, rectangular prisms, and spheres!
+These features are created by using the json files found in `jsonCommands/` which are copied, edited, and then sent to
+Onshape through Onshape API Rest calls. When each shape is created, values can be inputted to change what dimensions
+the shape has. 
+
+- **Cubes:** Only takes one dimensions, Side Length. 
+- **Cylinders:** Two dimensions, Circle diameter and Height _(extrude height)_.
+- **Rectangle:** Three dimensions, Length and Width of rectangle, along with Height _(extrude height)_.
+- **Sphere:** Three dimensions, Sphere Radius, Arc Angle, and Revolution Distance.
+  - _Arc Angle:_ Determines how big the arc is before it gets rotated around the revolute line. 180 deg creates a
+full sphere where values less than 90 create a top, and values between create a sphere with a top cutout. Has to be
+between 0 and 180 deg.
+  - _Revolution Distance:_ Determines how far rotated around the revolute line the arc is. 360 deg is a full rotation,
+where 180 deg is a half rotation, and everything between can be used. Has to be between 0 and 360 deg.
+
+Example Screen Recording: <br> ![](./examples/CreateAndEdit.gif)
+
 <br>
 
-#### - CEEO Juypter:
+#### - CEEO Jupyter: ![](./examples/journal-code.svg)
 **_In the process of documenting, coming soon over the next week!_**<br><br>
 
 ---
