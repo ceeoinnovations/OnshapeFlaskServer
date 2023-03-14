@@ -264,7 +264,11 @@ Example Screen Recording: <br> ![](./examples/CreateAndEdit.gif)
 <br>
 
 #### - CEEO Jupyter: ![](./examples/journal-code.svg)
-**_In the process of documenting, coming soon over the next week!_**<br><br>
+Sadly this tool had a few issues getting it to work. As of the summer of 2022, JupyterLite does not have the nessecary 
+libraries to allow the use of the Onshape REST API. Basic funcationallity works and that can be mostly replicated by 
+simply setting up JupyterLite. You can check out the _[JupyterLite documentation](https://jupyterlite.readthedocs.io/en/0.1.0-beta/)_
+to learn more about how JupyterLite allows the use of Jupyter Notebook through a website.
+<br><br>
 
 ---
 This project created by the Tufts Center for Engineering Education and Outreach (CEEO).
